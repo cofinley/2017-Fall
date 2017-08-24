@@ -77,7 +77,7 @@
 - **Device driver** for each device controller to manage IO
 	- Uniform interface b/w controller and kernel
 
-![](http://i.imgur.com/zwF5cP5.png)
+![](https://i.imgur.com/zwF5cP5.png)
 
 ## Computer-System Arch
 
@@ -231,7 +231,7 @@
 
 ### Performance of Various Levels of Storage
 
-![](http://i.imgur.com/AKrTjqV.png)
+![](https://i.imgur.com/AKrTjqV.png)
 
 ## Data Migration
 
