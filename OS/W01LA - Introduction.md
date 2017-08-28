@@ -1,9 +1,44 @@
 
-# Operating Systems
+# Operating Systems - Introduction
 
 > 2017/08/22
 >
 > Week 01, Lecture A
+
+<!-- TOC -->
+
+- [Operation](#operation)
+- [I/O Structure](#io-structure)
+- [Storage Structure](#storage-structure)
+	- [Storage Hierarchy](#storage-hierarchy)
+- [Computer-System Arch](#computer-system-arch)
+	- [Dual-core design](#dual-core-design)
+	- [Clustered Systems](#clustered-systems)
+- [Types of OS](#types-of-os)
+	- [Batch OS](#batch-os)
+	- [Time-sharing](#time-sharing)
+	- [Distributed](#distributed)
+	- [Network](#network)
+	- [Real-time](#real-time)
+- [OS Ops](#os-ops)
+	- [Transition from User to Kernel Mode](#transition-from-user-to-kernel-mode)
+- [Process Mgmt.](#process-mgmt)
+- [Memory Mgmt.](#memory-mgmt)
+- [File Mgmt.](#file-mgmt)
+	- [Mass-Storage Mgmt.](#mass-storage-mgmt)
+	- [Performance of Various Levels of Storage](#performance-of-various-levels-of-storage)
+- [Data Migration](#data-migration)
+- [I/O Subsystem](#io-subsystem)
+- [Protection & Security](#protection--security)
+- [Kernel Data Structures](#kernel-data-structures)
+- [Computing Environments](#computing-environments)
+	- [Distributed Computing](#distributed-computing)
+	- [Client/Server](#clientserver)
+	- [Peer-to-peer](#peer-to-peer)
+	- [Virtualization](#virtualization)
+	- [Cloud Computing](#cloud-computing)
+
+<!-- /TOC -->
 
 - OS is a colllection of programs that control the hardware
   - Kernel: program that is running all the time
