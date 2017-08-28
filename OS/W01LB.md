@@ -1,5 +1,5 @@
 
-# Operating Systems
+# Operating Systems - OS Structures
 
 > 2017/08/24
 >
