@@ -27,13 +27,13 @@
 		- Extends opcode
 		- Up to 2^6 = 64 functions can be defined by same opcode
 		- MIPS uses opcode 0 to define R-type instructions
-	- ...Pic
+	- ![](https://i.imgur.com/88mwj2X.png)
 - Immediate (I-type)
 	- 16-bit constant part
-	- ...Pic
+	- ![](https://i.imgur.com/CSnxU58.png)
 - Jump (J-type)
 	- Used by jump instructions
-	- ...Pic
+	- ![](https://i.imgur.com/56USBCM.png)
 
 ## Instruction Categories
 
