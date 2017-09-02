@@ -105,11 +105,13 @@
 		- Bad b/c buffering needs to handle multiple comms
 			- Requires bigger implementation
 - Queue/buffer of messages can be different capacity
-	- Zero capacit: no messages queue on the link
+	- Zero capacity: no messages queue on the link
 		- Sender has to wait for receiver (rendezvous)
 	- Bounded: finite length of messages
+		- **Aka explicit buffering**
 		- Send must wait if queue/buffer full
 	- Unbounded: infinite length
+		- **Aka automatic buffering**
 		- Sender never waits
 
 ## IPC Examples
