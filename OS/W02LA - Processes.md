@@ -159,6 +159,12 @@ main(){
 	- `fork()`: new child process
 	- `exec()`, `execlp()`: after fork, replace process' memory space with new program
 	- `wait()`:  parent waits for child process to complete
+		- Takes pointer to int, returns PID of completed process
+			- If no child, return -1
+		- Wait for an unspecified child process:
+			- `wait(&status);`
+		- Wait for a specific child process whose ID is known:
+			- `while (pid != wait(&status)){}`
 
 ```c
 int main() {
@@ -177,6 +183,24 @@ int main() {
 		printf("Child complete");
 	}
 	return 0;
+}
+```
+
+```c
+void main(void)
+{
+	pid_t pid, pid_child;
+	int status;
+	 
+	if ((pid = fork()) == 0) {
+		// child here
+		child();
+	}
+	else { 
+		// parent here
+		parent();
+		pid_child = wait(&status);
+	}
 }
 ```
 
