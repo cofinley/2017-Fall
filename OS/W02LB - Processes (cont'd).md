@@ -121,11 +121,11 @@
 - Process creates shared memory segment
 	- `id = shmget(IPC_PRIVATE, size, S_IRUSR|S_IWUSR);`
 - Process wants access to that shared memory so it must attach to it
-	- `shared memory = (char *) shmat(id, NULL, 0);`
+	- `shared_memory = (char *) shmat(id, NULL, 0);`
 - Process can write to shared memory
-	- `sprintf(shared memory, "Writing to shared memory");`
+	- `sprintf(shared_memory, "Writing to shared memory");`
 - When done, process can detach shared memory from its address space
-	- `shmdt(shared memory);`
+	- `shmdt(shared_memory);`
 - Remove from system
 	- `shmct1(segment_id, IPC_RMID,NULL)`
 
