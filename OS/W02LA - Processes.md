@@ -209,6 +209,10 @@ void main(void)
 - When process done, error occurs, fatal error occurs, or killed by other process
 - Examples:
 	- `exit()`: process deleted, resources reallocated
+		- Use `#include <stdlib.h>`
+		- Pass in an integer argument
+			- Typically 0 used for success
+			- Non-zero used for error
 	- `abort()`: parent terminates child process
 - Some OS's don't allow children to live without parents
 	- If so, must terminate children and grandchildren when parent terminated
