@@ -75,6 +75,7 @@ void main() {
     exit(0);
   }
 
+  // Init total
   total->value = 0;
   
   if ((pid1 = fork()) == 0) {
@@ -93,6 +94,7 @@ void main() {
     process4();
   }
   
+  // Wait for all children to finish
   waitpid(pid1, NULL, 0);
   printf("Child with ID: %d has just exited.\n", pid1);
   waitpid(pid2, NULL, 0);
@@ -101,7 +103,6 @@ void main() {
   printf("Child with ID: %d has just exited.\n", pid3);
   waitpid(pid4, NULL, 0);
   printf("Child with ID: %d has just exited.\n", pid4);
-
 
   // Detach segment
   if (shmdt(total) == -1){
