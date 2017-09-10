@@ -2,7 +2,7 @@
   Connor Finley
   Operating Systems
   Project 1
-  Sep. 8, 2017
+  Sep. 9, 2017
 */
 
 #include <stdio.h>
@@ -24,25 +24,33 @@ typedef struct
 shared_mem *total;
 
 void process1() {
-  total->value += 100000;
+  while (total->value < 100000) {
+    total->value += 1;
+  }
   printf("From process 1: total = %d\n", total->value);
   exit(0);
 }
 
 void process2() {
-  total->value += 100000;
+  while (total->value < 200000) {
+    total->value += 1;
+  }
   printf("From process 2: total = %d\n", total->value);
   exit(0);
 }
 
 void process3() {
-  total->value += 100000;
+  while (total->value < 300000) {
+    total->value += 1;
+  }
   printf("From process 3: total = %d\n", total->value);
   exit(0);
 }
 
 void process4() {
-  total->value += 200000;
+  while (total->value < 500000) {
+    total->value += 1;
+  }
   printf("From process 4: total = %d\n", total->value);
   exit(0);
 }
@@ -86,14 +94,14 @@ void main() {
   }
   
   waitpid(pid1, NULL, 0);
+  printf("Child with ID: %d has just exited.\n", pid1);
   waitpid(pid2, NULL, 0);
-  waitpid(pid3, NULL, 0);
-  waitpid(pid4, NULL, 0);
-  
-  printf("\nChild with ID: %d has just exited.\n", pid1);
   printf("Child with ID: %d has just exited.\n", pid2);
+  waitpid(pid3, NULL, 0);
   printf("Child with ID: %d has just exited.\n", pid3);
+  waitpid(pid4, NULL, 0);
   printf("Child with ID: %d has just exited.\n", pid4);
+
 
   // Detach segment
   if (shmdt(total) == -1){
