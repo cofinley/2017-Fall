@@ -20,5 +20,8 @@
 ---
 
 - Study and do the cannibal/missionary problem
+    - Understand alternatives, selection, decision tree
     - Will be on quiz
 - Quiz could be sep 26.
+    - 3 or 4 questions in-class
+    - Some online    
