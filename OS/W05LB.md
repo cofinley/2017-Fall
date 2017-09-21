@@ -8,6 +8,19 @@
 
 ---
 
+
+<!-- vim-markdown-toc GFM -->
+* [Sync Problems](#sync-problems)
+	* [Bounded-Buffer Problem](#bounded-buffer-problem)
+	* [Reader/Writers Problem](#readerwriters-problem)
+* [- **verify**](#--verify)
+	* [Dining-Philosophers Problem](#dining-philosophers-problem)
+* [Semaphore Problems](#semaphore-problems)
+* [Monitors](#monitors)
+	* [Condition Variables](#condition-variables)
+
+<!-- vim-markdown-toc -->
+
 - insert semaphore here
 
 ## Sync Problems

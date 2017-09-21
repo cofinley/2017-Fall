@@ -4,6 +4,14 @@
 > 
 > Week 2, Lecture B
 
+
+<!-- vim-markdown-toc GFM -->
+	* [Amdahl's Law](#amdahls-law)
+* [Chapter 2 - Instructions](#chapter-2---instructions)
+	* [MIPS General-Purpose Registers](#mips-general-purpose-registers)
+
+<!-- vim-markdown-toc -->
+
 ## Amdahl's Law
 
 - Improving some part of the computer and expecting a proportional speedup

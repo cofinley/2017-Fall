@@ -4,6 +4,17 @@
 >
 > Week 01, Lecture A
 
+
+<!-- vim-markdown-toc GFM -->
+* [Parallelism](#parallelism)
+	* [Classes in apps](#classes-in-apps)
+	* [Classes in arch](#classes-in-arch)
+* [Flynn's Taxonomy](#flynns-taxonomy)
+* [Defining Computer Architecture](#defining-computer-architecture)
+* [Instruction Set Architecture (ISA)](#instruction-set-architecture-isa)
+
+<!-- vim-markdown-toc -->
+
 ## Parallelism
 
 ### Classes in apps

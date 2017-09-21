@@ -5,6 +5,18 @@
 > Week 05, Lecture A
 
 
+<!-- vim-markdown-toc GFM -->
+* [System Calls](#system-calls)
+* [Procedures](#procedures)
+	* [Procedure Instructions](#procedure-instructions)
+	* [Procedure Example](#procedure-example)
+	* [Call/Return Sequence](#callreturn-sequence)
+	* [Procedure Call Convention](#procedure-call-convention)
+	* [Procedure Return Convention](#procedure-return-convention)
+* [Memory Layout](#memory-layout)
+	* [Stack Frames](#stack-frames)
+
+<!-- vim-markdown-toc -->
 
 ## System Calls
 
@@ -87,8 +99,18 @@ swap:
 
 - Called procedure (callee) does this to setup stack frame:
 1. Allocate memory for stack frame
+    - n bytes (frame size) allocated on frame
 1. Save callee-saved regs in stack frame
+    - $ra, $fp, $s0-$s7 should be saved inside procedure (callee)
+    - Before modding their value and only if needed
+    - Reg $ra should be saved only if procedure makes call
 1. Update $sp and $fp
+    - $fp = $sp-4
+    - $sp = $sp-n
+
+### Procedure Return Convention
+
+- ...
 
 ## Memory Layout
 
