@@ -11,7 +11,7 @@ output: pdf_document
 > `1010 1101 0001 0000 0000 0000 0000 0010`
 > What does it represent, assuming it is …
 
-### a)
+### 1.a
 
 > A 2's complement signed integer?
 
@@ -21,7 +21,7 @@ Negative binary; flip the bits and add one:
 `0101 0010 1110 1111 1111 1111 1111 1110`
 =-1,391,460,35022222222
 
-### b)
+### 1.b
 
 > A MIPS instruction?
 
@@ -52,7 +52,7 @@ subu $t1,$t2,$t1
 
 > For each pseudo-instruction in the following table, produce a minimal sequence of actual MIPS instructions to accomplish the same thing. You may use the `$at` for some of the sequences. In the following table, `imm32` refers to a 32-bit constant.
 
-### a
+### 3.a
 
 > `move $t1, $t2`
 
@@ -60,7 +60,7 @@ subu $t1,$t2,$t1
 addu $t1, $zero, $t2
 ```
 
-### b
+### 3.b
 
 > `clear $t5`
 
@@ -68,7 +68,7 @@ addu $t1, $zero, $t2
 and $t5, $t5, $zero
 ```
 
-### c
+### 3.c
 
 > `li $t5, imm32`
 
@@ -76,7 +76,7 @@ and $t5, $t5, $zero
 addiu $t5, $zero, imm32
 ```
 
-### d
+### 3.d
 
 > `addi $t5, $t3, imm32`
 
@@ -88,7 +88,7 @@ or $t5, $t1, $t2		# combine into t5
 add $t5, $t3, $t5		# add $t3
 ```
 
-### e
+### 3.e
 
 > `beq $t5, imm32, Label`
 
@@ -100,7 +100,7 @@ or $t3, $t1, $t2		# combine into t3
 beq $t5, $t3, Label
 ```
 
-### f
+### 3.f
 
 > `ble $t5, $t3, Label`
 
@@ -109,7 +109,7 @@ slt $t0, $t3, $t5		# inverse of $t5 <= $t3, $t5 > $t3
 beq $t0, $zero, Label	# branch if not $t5 > $t3
 ```
 
-### g
+### 3.g
 
 > `bgt $t5, $t3, Label`
 
@@ -118,7 +118,7 @@ slt $t0, $t3, $t5		# $t5 > $t3
 bne $t0, $zero, Label	# branch if $t5 > $t3
 ```
 
-### h
+### 3.h
 
 > `bge $t5, $t3, Label`
 
@@ -131,10 +131,24 @@ beq $t0, $zero, Label	# branch if $t5 >= $t3
 
 > Translate the following statements into MIPS assembly language. Assume that `a`, `b`, `c`, and `d` are allocated in `$s0`, `$s1`, `$s2`, and `$s3`. All values are signed 32-bit integers.
 
-### a
+### 4.a
 
 > `if ((a > b) || (b > c)) {d = 1;}`
 
-### b
+```asm
+# b < a
+slt $t0, $s1, $s0
+
+# c < b
+slt $t1, $s2, $s1
+
+or $t2, $t0, $t1
+
+bne $t2, $zero, set_d
+
+set_d: addi $s3, $zero, 1
+```
+
+### 4.b
 
 > `if ((a <= b) && (b > c)) {d = 1;}`

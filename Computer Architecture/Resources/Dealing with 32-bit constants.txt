@@ -1,0 +1,4 @@
+addi $t0, $zero, 0xFFFF		# create mask
+andi $t1, $t0, imm32		# get bottom bits using mask
+xori $t2, $t1, imm32		# get top bits by filtering out bottom bits
+or $t5, $t1, $t2		# combine into t5
