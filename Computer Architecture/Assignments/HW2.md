@@ -8,7 +8,9 @@ output: pdf_document
 ## 1
 
 > Bits have no inherent meaning. Given the 32-bit pattern:
+>
 > `1010 1101 0001 0000 0000 0000 0000 0010`
+>
 > What does it represent, assuming it is …
 
 ### 1.a
@@ -16,9 +18,13 @@ output: pdf_document
 > A 2's complement signed integer?
 
 Negative binary; flip the bits and add one:
+
 `1010 1101 0001 0000 0000 0000 0000 0010`
+
 `0101 0010 1110 1111 1111 1111 1111 1101`
+
 `0101 0010 1110 1111 1111 1111 1111 1110`
+
 =-1,391,460,35022222222
 
 ### 1.b
@@ -106,7 +112,7 @@ beq $t5, $t3, Label
 
 ```asm
 slt $t0, $t3, $t5		# inverse of $t5 <= $t3, $t5 > $t3
-beq $t0, $zero, Label	# branch if not $t5 > $t3
+beq $t0, $zero, Label		# branch if not $t5 > $t3
 ```
 
 ### 3.g
@@ -115,7 +121,7 @@ beq $t0, $zero, Label	# branch if not $t5 > $t3
 
 ```asm
 slt $t0, $t3, $t5		# $t5 > $t3
-bne $t0, $zero, Label	# branch if $t5 > $t3
+bne $t0, $zero, Label		# branch if $t5 > $t3
 ```
 
 ### 3.h
@@ -124,7 +130,7 @@ bne $t0, $zero, Label	# branch if $t5 > $t3
 
 ```asm
 slt $t0, $t5, $t3		# $t5 < $t3
-beq $t0, $zero, Label	# branch if $t5 >= $t3
+beq $t0, $zero, Label		# branch if $t5 >= $t3
 ```
 
 ## 4
@@ -136,19 +142,38 @@ beq $t0, $zero, Label	# branch if $t5 >= $t3
 > `if ((a > b) || (b > c)) {d = 1;}`
 
 ```asm
-# b < a
-slt $t0, $s1, $s0
-
-# c < b
-slt $t1, $s2, $s1
-
-or $t2, $t0, $t1
-
+slt $t0, $s1, $s0		# b < a
+slt $t1, $s2, $s1		# c < b
+or $t2, $t0, $t1		# (a > b) || (b > c)
 bne $t2, $zero, set_d
+j end
 
 set_d: addi $s3, $zero, 1
+
+end:
 ```
 
 ### 4.b
 
 > `if ((a <= b) && (b > c)) {d = 1;}`
+
+```asm
+slt $t0, $s1, $s0		# a > b
+xori $t0, $t0, 1		# flip to find a <= b
+slt $t1, $s2, $s1		# c < b
+and $t2, $t0, $t1		# (a <= b) && (b > c)
+bne $t2, $zero, set_d
+j end
+
+set_d: addi, $s3, $zero, 1
+
+end:
+```
+
+## 5
+
+> Consider the following fragment of C code:
+>
+> `for (i=0; i<=100; i=i+1) { a[i] = b[i] + c; }`
+>
+> Assume that `a` and `b` are arrays of words and the base address of `a` is in `$a0` and the base address of `b` is in `$a1`. Register `$t0` is associated with variable `i` and register `$s0` with `c`. Write the code in MIPS.
