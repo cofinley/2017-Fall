@@ -16,7 +16,8 @@
 
 - Register (R-type)
 	- Register-to-register instructions
-	- **Op**: op code 
+		- All data values used are located in registers
+	- **Op**: op code
 		- Specifies operation and format of instruction
 	- **Rs, Rt**: first and second source operands
 		- Read-enabled
@@ -29,11 +30,14 @@
 		- MIPS uses opcode 0 to define R-type instructions
 	- ![](https://i.imgur.com/88mwj2X.png)
 - Immediate (I-type)
-	- 16-bit constant part
+	- Operates on an immediate value and a register value
+		- Immediate values are max of 16 bits
 	- ![](https://i.imgur.com/CSnxU58.png)
 - Jump (J-type)
 	- Used by jump instructions
 	- ![](https://i.imgur.com/56USBCM.png)
+
+![Table](https://i.imgur.com/LlJPFNP.png)
 
 ## Instruction Categories
 
