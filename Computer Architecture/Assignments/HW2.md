@@ -92,14 +92,49 @@ add $t5, $t3, $t5		# add $t3
 
 > `beq $t5, imm32, Label`
 
+```asm
+addi $t0, $zero, 0xFFFF		# create mask
+andi $t1, $t0, imm32		# get bottom bits using mask
+xori $t2, $t1, imm32		# get top bits by filtering out bottom bits
+or $t3, $t1, $t2		# combine into t3
+beq $t5, $t3, Label
+```
+
 ### f
 
 > `ble $t5, $t3, Label`
+
+```asm
+slt $t0, $t3, $t5		# inverse of $t5 <= $t3, $t5 > $t3
+beq $t0, $zero, Label	# branch if not $t5 > $t3
+```
 
 ### g
 
 > `bgt $t5, $t3, Label`
 
+```asm
+slt $t0, $t3, $t5		# $t5 > $t3
+bne $t0, $zero, Label	# branch if $t5 > $t3
+```
+
 ### h
 
 > `bge $t5, $t3, Label`
+
+```asm
+slt $t0, $t5, $t3		# $t5 < $t3
+beq $t0, $zero, Label	# branch if $t5 >= $t3
+```
+
+## 4
+
+> Translate the following statements into MIPS assembly language. Assume that `a`, `b`, `c`, and `d` are allocated in `$s0`, `$s1`, `$s2`, and `$s3`. All values are signed 32-bit integers.
+
+### a
+
+> `if ((a > b) || (b > c)) {d = 1;}`
+
+### b
+
+> `if ((a <= b) && (b > c)) {d = 1;}`
