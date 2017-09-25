@@ -177,3 +177,67 @@ end:
 > `for (i=0; i<=100; i=i+1) { a[i] = b[i] + c; }`
 >
 > Assume that `a` and `b` are arrays of words and the base address of `a` is in `$a0` and the base address of `b` is in `$a1`. Register `$t0` is associated with variable `i` and register `$s0` with `c`. Write the code in MIPS.
+
+```asm
+addiu $t5, $zero, 100
+L1:
+	lw $t1, 0($a1)		# $t1 = b[i]
+	addu $t2, $t1, $s0	# $t2 = b[i] + c
+	sw $t2, 0($a0)		# a[i] = $t2
+	addiu $a0, $a0, 4	# point to next a[i]
+	addiu $a1, $a1, 4	# point to next b[i]
+	addiu $t0, $t0, 1	# i += 1
+	slt $t3, $t5, $t0	# $t3 = i > 100
+	beq $t3, $zero, L1	# loop if (i <= 100)
+```
+
+## 6
+
+> Add comments to the following MIPS code and describe in one sentence what it computes. Assume that `$a0` is used for the input and initially contains `n`, a positive integer. Assume that `$v0` is used for the output.
+
+```asm
+begin:
+	addi $t0, $zero, 0		# $t0 = 0
+	addi $t1, $zero, 1		# t1 = 1
+loop:
+	slt $t2, $a0, $t1		# $t2 = n < $t1
+	bne $t2, $zero, finish		# finish if n < $t1
+	add $t0, $t0, $t1		# if input >= $t1, $t0 += $t1
+	addi $t1, $t1, 2		# $t1 += 2
+	j loop				# repeat
+finish:
+	add $v0, $t0, $zero		# $v0 = $t0
+```
+
+The code produces the square number sequence, with each square outputted twice.
+
+## 7
+
+> The following code fragment processes an array and produces two important values in registers `$v0` and `$v1`. Assume that the array consists of 5000 words indexed 0 through 4999, and its base address is stored in `$a0` and its size (5000) in `$a1`. Describe what this code does. Specifically, what will be returned in `$v0` and `$v1`?
+
+```asm
+add $a1, $a1, $a1
+add $a1, $a1, $a1		# ... $a1 *= 4
+add $v0, $zero, $zero		$ $v0 = 0
+add $t0, $zero, $zero		# $t0 = 0
+outer:
+	add $t4, $a0, $t0	# $t4 = $a0 + $t0
+	lw $t4, 0($t4)		# $t4 = $t4[i]
+	add $t5, $zero, $zero	$t5 = 0
+	add $t1, $zero, $zero	$t0 = 0
+inner:
+	add $t3, $a0, $t1	# $t3 = $a0 + $t1
+	lw $t3, 0($t3)		# $t3 = $t3[i]
+	bne $t3, $t4, skip	# skip if $t3 != $t4
+	addi $t5, $t5, 1	# $t5 += 1
+skip:
+	addi $t1, $t1, 4	# $t1 += 4
+	bne $t1, $a1, inner	# inner if $t1 != $a1
+	slt $t2, $t5, $v0
+	bne $t2, $zero, next	# next if $t5 < $v0
+	add $v0, $t5, $zero	# $v0 = $t5
+	add $v1, $t4, $zero	# $v1 = $t4
+next:
+	addi $t0, $t0, 4	# $t0 += 4
+	bne $t0, $a1, outer	# outer if $t0 != $a1
+```
