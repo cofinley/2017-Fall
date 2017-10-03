@@ -11,7 +11,7 @@
 - [Threads](#threads)
 	- [User/kernel Level](#userkernel-level)
 	- [Multithreading models](#multithreading-models)
-- [Processor Synchronization](#processor-synchronization)
+- [Process Synchronization](#process-synchronization)
 	- [Peterson's solution](#petersons-solution)
 	- [Semaphores](#semaphores)
 	- [Bounded-buffer problem](#bounded-buffer-problem)
@@ -90,7 +90,7 @@
 
 ### States
 
-- **New** state: process created
+- **New**: process created
 - **Running**: CPU being used by process
 - **Blocked/Waiting**: I/O completion needed
 - **Ready**: process ready, but waiting for other process
@@ -166,13 +166,13 @@
 		- Slow
 		- Big overhead to be able to block every thread
 - Context switching
-	- User level faster b/c uses library, kernel level uses syscall, so it's longer
+	- User-level faster b/c uses library, kernel-level uses syscall, which is longer
 
 ### Multithreading models
 
 - Many-to-one:
 	- Many user threads to one kernel thread
-	- One block -> all blocked
+	- Kernel-level blocked -> all blocked
 - One-to-one:
 	- Each user thread has one kernel thread
 	- More concurrency
@@ -184,7 +184,7 @@
 - Two-level
 	- Like M-M, but allows user thread to be bound to kernel-level
 
-## Processor Synchronization
+## Process Synchronization
 
 - Critical section problem
 	- Critical section is section of code that should only be accessed by one process
