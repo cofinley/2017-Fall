@@ -5,10 +5,18 @@
 - [OS](#os)
 	- [OS structures](#os-structures)
 - [Processes](#processes)
+	- [States](#states)
+	- [Creations](#creations)
+	- [IPC](#ipc)
 - [Threads](#threads)
 	- [User/kernel Level](#userkernel-level)
+	- [Multithreading models](#multithreading-models)
 - [Processor Synchronization](#processor-synchronization)
+	- [Peterson's solution](#petersons-solution)
+	- [Semaphores](#semaphores)
+	- [Bounded-buffer problem](#bounded-buffer-problem)
 - [Scheduling](#scheduling)
+	- [Criteria](#criteria)
 	- [Algos](#algos)
 		- [FCFS](#fcfs)
 		- [SJF](#sjf)
@@ -77,46 +85,52 @@
 	- Data
 	- Stack
 	- Heap
-- States
-	- **New** state: process created
-	- **Running**: CPU being used by process
-	- **Blocked/Waiting**: I/O completion needed
-	- **Ready**: process ready, but waiting for other process
-	- **Terminated**: process finished execution
-	- Transitions
-		- Transition one: process discovers it can't continue
-			- Running -> Blocked
-		- Transition 2: scheduler decides that running process has run long enough, let other process have a turn
-			- Running -> Ready
-		- Transition 3: all other processes have had their turn, time for first process to run again
-			- Ready -> Running
-		- Transition 4: external event occurs which allows process to continue
-			- Blocked -> Ready
-		- Transition 5: process created
-			- New -> Ready
-		- Transition 6: finished executing
-			- Running -> Terminated
-- Creations
-	- Look to quiz for these two
-	- Processes created with `fork()`
-		- Use `wait()` to have parent wait for child to finish
-- IPC
-	- Reasons
-		- Information speedup
-		- Performance speedup
-		- Modularity
-		- Convenience
-	- Shared-memory
-		- Store/load from memory
-			- Can be hard when syncing multiple processes
-		- Good for large data
-	- Message-passing
-		- Mailbox/port concept
-			- Procs establish comm link (logical or physical)
-		- Happens in kernel
-			- Via system call, which can be slow
-		- Good for small data
-		- Easier to implement
+
+### States
+
+- **New** state: process created
+- **Running**: CPU being used by process
+- **Blocked/Waiting**: I/O completion needed
+- **Ready**: process ready, but waiting for other process
+- **Terminated**: process finished execution
+- Transitions
+	- Transition one: process discovers it can't continue
+		- Running -> Blocked
+	- Transition 2: scheduler decides that running process has run long enough, let other process have a turn
+		- Running -> Ready
+	- Transition 3: all other processes have had their turn, time for first process to run again
+		- Ready -> Running
+	- Transition 4: external event occurs which allows process to continue
+		- Blocked -> Ready
+	- Transition 5: process created
+		- New -> Ready
+	- Transition 6: finished executing
+		- Running -> Terminated
+
+### Creations
+
+- Look to quiz for these two
+- Processes created with `fork()`
+	- Use `wait()` to have parent wait for child to finish
+
+### IPC
+
+- Reasons
+	- Information speedup
+	- Performance speedup
+	- Modularity
+	- Convenience
+- Shared-memory
+	- Store/load from memory
+		- Can be hard when syncing multiple processes
+	- Good for large data
+- Message-passing
+	- Mailbox/port concept
+		- Procs establish comm link (logical or physical)
+	- Happens in kernel
+		- Via system call, which can be slow
+	- Good for small data
+	- Easier to implement
 
 ## Threads
 
@@ -149,7 +163,9 @@
 		- Big overhead to be able to block every thread
 - Context switching
 	- User level faster b/c uses library, kernel level uses syscall, so it's longer
-- Multithreading models
+
+### Multithreading models
+
 - Many-to-one:
 	- Many user threads to one kernel thread
 	- One block -> all blocked
@@ -176,59 +192,65 @@
 		- Make sure every process gets a chance to enter its own critical section
 		- Prevents **starvation**
 		- Limit on the number of times other processes are allowed to enter their critical sections after a process has made request to enter its critical section and before that request is granted
-- Peterson's solution
-	- Two-process solution
-	- Assume LOAD and STORE instructions are atomic (can't be interrupted)
-	- Two variables shared:
-		- `int turn`
-			- Indicates whose turn it is to enter critical section
-		- `Boolean flag[2]`
-			- Array used to indicate if process ready to enter critical section
-			- flag[i] = true implies process i is ready
+
+### Peterson's solution
+
+- Two-process solution
+- Assume LOAD and STORE instructions are atomic (can't be interrupted)
+- Two variables shared:
+	- `int turn`
+		- Indicates whose turn it is to enter critical section
+	- `Boolean flag[2]`
+		- Array used to indicate if process ready to enter critical section
+		- flag[i] = true implies process i is ready
+```c
+do {
+	flag[i] = true;
+	turn = j;
+	while (flag[j] && turn == j);
+
+	//critical section
+
+	flag[i] = false;
+
+	//remainder section
+} while (true);
+```
+
+### Semaphores
+
+- Sync tool that is more sophisticated than mutex lock
+- *S* variable
+- Only accessed by `wait()` and `signal()`
+	- Both atomic
 	```c
-	do {
-		flag[i] = true;
-		turn = j;
-		while (flag[j] && turn == j);
+	wait(S) {
+		while (S <= 0)
+			; // busy wait, no operation
+		S--;
+	}
 
-		//critical section
-
-		flag[i] = false;
-
-		//remainder section
-	} while (true);
+	signal(S) {
+		S++;
+	}
 	```
-- Semaphores
-	- Sync tool that is more sophisticated than mutex lock
-	- *S* variable
-	- Only accessed by `wait()` and `signal()`
-		- Both atomic
-		```c
-		wait(S) {
-			while (S <= 0)
-				; // busy wait, no operation
-			S--;
-		}
+	```c
+	Semaphore mutex;  // init'd to 1
+	do {
+		wait(mutex);
+		// critical section
+		signal(mutex);
+		// remainder section
+	} while(true);
+	```
 
-		signal(S) {
-			S++;
-		}
-		```
-		```c
-		Semaphore mutex;  // init'd to 1
-		do {
-			wait(mutex);
-			// critical section
-			signal(mutex);
-			// remainder section
-		} while(true);
-		```
-- Bounded-buffer problem
-	- *N* buffer cells
-	- Semaphore **mutex** init'd to 1
-		- mutex = "mutual exclusion"
-	- Semaphore **full** init'd to 0
-	- Semaphore **empty** init'd to *N*
+### Bounded-buffer problem
+
+- *N* buffer cells
+- Semaphore **mutex** init'd to 1
+	- mutex = "mutual exclusion"
+- Semaphore **full** init'd to 0
+- Semaphore **empty** init'd to *N*
 
 ![Bounded-Buffer Problem](https://i.imgur.com/O7Xfi2t.png)
 
@@ -251,21 +273,23 @@
 - **Preemptive sheduling**:
 	- OS/kernel can suspend a currently running process and switch to another based on scheduling algorithm
 	- If interrupt causes removal of process from CPU, after interrupt done, CPU assigned back to that process
-- Criteria
-	- CPU utilization
-		- Want to maximize
-	- Throughput
-		- Number of processes that complete their execution per time unit
-		- Want to maximize
-	- Turn-around time
-		- Amount of time to execute a process
-		- Want to minimize
-	- Waiting time
-		- Amount of time process waits in ready queue
-		- Want to minimize
-	- Response time
-		- Time it takes from when request submitted until first response produced (not output)
-		- Want to minimize
+
+### Criteria
+
+- CPU utilization
+	- Want to maximize
+- Throughput
+	- Number of processes that complete their execution per time unit
+	- Want to maximize
+- Turn-around time
+	- Amount of time to execute a process
+	- Want to minimize
+- Waiting time
+	- Amount of time process waits in ready queue
+	- Want to minimize
+- Response time
+	- Time it takes from when request submitted until first response produced (not output)
+	- Want to minimize
 
 ### Algos
 
