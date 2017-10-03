@@ -28,6 +28,8 @@
 
 <!-- /TOC -->
 
+---
+
 - Terms
 	- **Preempt**: forcibly pause/interrupt execution of task and resume at later time
 		- Process is "preempted" when it is scheduled out of execution and waits for the next time slice to run in
@@ -35,6 +37,8 @@
 		- OS can interrupt/preempt one process in favor of another process
 		- Non-preemptive: process can't be interrupted
 			- Processes voluntarily give up CPU
+
+---
 
 ## OS
 
