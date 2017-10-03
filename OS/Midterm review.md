@@ -32,7 +32,9 @@
 	- **Preempt**: forcibly pause/interrupt execution of task and resume at later time
 		- Process is "preempted" when it is scheduled out of execution and waits for the next time slice to run in
 			- Context switch happens
+		- OS can interrupt/preempt one process in favor of another process
 		- Non-preemptive: process can't be interrupted
+			- Processes voluntarily give up CPU
 
 ## OS
 
@@ -106,6 +108,8 @@
 		- New -> Ready
 	- Transition 6: finished executing
 		- Running -> Terminated
+
+![Process States](https://www.studytonight.com/operating-system/images/process-state.png)
 
 ### Creations
 
@@ -322,6 +326,11 @@ do {
 - After each interrupt, pick process with shortest next burst time
 - Preemptive
 	- If a new process arrives with CPU burst length less than remaining time of current executing process, preempt
+
+![SRTF](https://www.studytonight.com/operating-system/images/sjf-preemptive.png)
+
+- Image above says preemptive SJF, but is same thing as SRTF
+	- P1 starts, but as soon as a shorter process comes, P1 is preempted
 - Can produce min. avg. wait time
 - Increased overhead
 
