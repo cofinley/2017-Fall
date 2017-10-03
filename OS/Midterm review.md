@@ -1,5 +1,25 @@
 # Midterm Review
 
+<!-- TOC -->
+
+- [OS](#os)
+	- [OS structures](#os-structures)
+- [Processes](#processes)
+- [Threads](#threads)
+	- [User/kernel Level](#userkernel-level)
+- [Processor Synchronization](#processor-synchronization)
+- [Scheduling](#scheduling)
+	- [Algos](#algos)
+		- [FCFS](#fcfs)
+		- [SJF](#sjf)
+		- [SRTF](#srtf)
+		- [Priority Scheduling](#priority-scheduling)
+		- [Round Robin](#round-robin)
+- [Scheduling in threading system](#scheduling-in-threading-system)
+- [Algo evaluation](#algo-evaluation)
+
+<!-- /TOC -->
+
 - Terms
 	- **Preempt**: forcibly pause/interrupt execution of task and resume at later time
 		- Process is "preempted" when it is scheduled out of execution and waits for the next time slice to run in
@@ -107,7 +127,7 @@
 	- Economy
 	- Scalability
 
-### User/kernel level
+### User/kernel Level
 
 - User:
 	- Threads only visible to process, only process visible to kernel
