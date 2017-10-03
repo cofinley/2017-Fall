@@ -11,7 +11,7 @@
 - [Threads](#threads)
 	- [User/kernel Level](#userkernel-level)
 	- [Multithreading models](#multithreading-models)
-- [Processor Synchronization](#processor-synchronization)
+- [Process Synchronization](#process-synchronization)
 	- [Peterson's solution](#petersons-solution)
 	- [Semaphores](#semaphores)
 	- [Bounded-buffer problem](#bounded-buffer-problem)
