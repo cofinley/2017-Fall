@@ -4,24 +4,24 @@
 >
 > Week 2, Lecture B
 
- * [Interprocess Communication (IPC)](#interprocess-communication--ipc-)
- * [IPC Models](#ipc-models)
-   + [Shared memory](#shared-memory)
-     - [Producer-Consumer Problem](#producer-consumer-problem)
-   + [Message passing](#message-passing)
-     - [Direct Communication](#direct-communication)
-     - [Indirect Communication](#indirect-communication)
-     - [Synchronization (buffering)](#synchronization--buffering-)
- * [IPC Examples](#ipc-examples)
-   + [Posix shared memory:](#posix-shared-memory-)
-   + [Mach (message passing)](#mach--message-passing-)
-   + [Windows](#windows)
-   + [Client-server systems](#client-server-systems)
-     - [**Sockets**](#--sockets--)
-     - [Remote Procedure Call (RPC)](#remote-procedure-call--rpc-)
-     - [Pipes](#pipes)
-       * [Types of Pipes](#types-of-pipes)
- * [Project 1 Info](#project-1-info)
+* [Interprocess Communication (IPC)](#interprocess-communication--ipc-)
+* [IPC Models](#ipc-models)
++ [Shared memory](#shared-memory)
+	- [Producer-Consumer Problem](#producer-consumer-problem)
++ [Message passing](#message-passing)
+	- [Direct Communication](#direct-communication)
+	- [Indirect Communication](#indirect-communication)
+	- [Synchronization (buffering)](#synchronization--buffering-)
+* [IPC Examples](#ipc-examples)
++ [Posix shared memory:](#posix-shared-memory-)
++ [Mach (message passing)](#mach--message-passing-)
++ [Windows](#windows)
++ [Client-server systems](#client-server-systems)
+	- [**Sockets**](#--sockets--)
+	- [Remote Procedure Call (RPC)](#remote-procedure-call--rpc-)
+	- [Pipes](#pipes)
+	* [Types of Pipes](#types-of-pipes)
+* [Project 1 Info](#project-1-info)
 
 ## Interprocess Communication (IPC)
 
@@ -39,7 +39,7 @@
 - P1 store info in memory
 - P2 load same info from memory
 - Better for larger data
-- Hurdle: synchronizing actions between multiple processes when accessing shared memory 
+- Hurdle: synchronizing actions between multiple processes when accessing shared memory
 
 #### Producer-Consumer Problem
 
@@ -48,27 +48,26 @@
 	- `#define BUFFER_SIZE 10`
 	- Producer
 		```c
-		item next_produced; 
-		while (true) { 
-			/* produce an item in next_produced */ 
-			while (((in + 1) % BUFFER_SIZE) == out) 
-				; /* do nothing */ 
-			buffer[in] = next_produced; 
-			in = (in + 1) % BUFFER_SIZE; 
+		item next_produced;
+		while (true) {
+			/* produce an item in next_produced */
+			while (((in + 1) % BUFFER_SIZE) == out)
+				; /* do nothing */
+			buffer[in] = next_produced;
+			in = (in + 1) % BUFFER_SIZE;
 		```
 	- Consumer
 		```c
-		item next_consumed; 
-		while (true) {	while (in == out) 
-				; /* do nothing */	next_consumed = buffer[out]; 
-			out = (out + 1) % BUFFER_SIZE;
-			/* consume the item in next consumed */ 
-		} 
+		item next_consumed;
+		while (true) {	while (in == out)
+				; /* do nothing */	next_consumed = buffer[out];
+			out = (out + 1) % BUFFER_SIZE;
+			/* consume the item in next consumed */
+		}
 		```
 
-
 ### Message passing
-	
+
 - P1 sends info to kernel
 - P2 receives same info from kernel
 - Better for smaller communication

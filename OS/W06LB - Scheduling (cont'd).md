@@ -51,7 +51,7 @@
 		- ...
 	- Hard
 		- Guarantee it will stay and not migrate to other processors
-	
+
 ### Load-balancing
 
 - If symmetric, need max CPU util
@@ -61,7 +61,6 @@
 - Pull migration
 	- ...
 - Contradicts with affinity, need to find balance
-
 
 ### Multithread Multicore
 
@@ -146,7 +145,7 @@
 	- n = lambda * W
 - Example:
 	- ...
-	
+
 ### Simulations
 
 - Another way to evaluate algo

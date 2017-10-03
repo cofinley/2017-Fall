@@ -69,16 +69,16 @@ Quiz: **how many interrupts will be created?**
 
 ```c
 main(){
-	product =1;    
-	k = 0;    
-	sum =0;     
+	product =1;
+	k = 0;
+	sum =0;
 	while (k<100){
 		product = product * k;
 		k++;
 		print (product);
 		sum = sum + product + k;
-		print(sum);      
-	}  
+		print(sum);
+	}
 }
 ```
 
@@ -155,7 +155,7 @@ main(){
 - On startup, system call, or user request
 - Parent creates child processes (tree)
 	- Can divvy up resource sharing and executing options
-- Examples: 
+- Examples:
 	- `fork()`: new child process
 	- `exec()`, `execlp()`: after fork, replace process' memory space with new program
 	- `wait()`:  parent waits for child process to complete
@@ -171,7 +171,7 @@ int main() {
 	pid_t pid;
 
 	pid = fork();
-	
+
 	if (pid < 0) { /* error */
 		return 1;
 	}
@@ -191,12 +191,12 @@ void main(void)
 {
 	pid_t pid, pid_child;
 	int status;
-	 
+
 	if ((pid = fork()) == 0) {
 		// child here
 		child();
 	}
-	else { 
+	else {
 		// parent here
 		parent();
 		pid_child = wait(&status);

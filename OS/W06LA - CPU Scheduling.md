@@ -4,7 +4,6 @@
 
 <!-- vim-markdown-toc GFM -->
 * [Basic Concepts](#basic-concepts)
-* [- Distribution b/w the two is important](#--distribution-bw-the-two-is-important)
 * [CPU Scheduler](#cpu-scheduler)
 * [Dispatcher](#dispatcher)
 * [Scheduling Criteria](#scheduling-criteria)
@@ -12,30 +11,37 @@
 * [FCFS](#fcfs)
 * [SJF](#sjf)
 	* [Determine Length of CPU Burst](#determine-length-of-cpu-burst)
-	* [Priority Scheduling](#priority-scheduling)
-	* [Round Robin](#round-robin)
-	* [Multilevel Queue](#multilevel-queue)
-		* [Feedback Queue](#feedback-queue)
+* [SRTF](#srtf)
+* [Priority Scheduling](#priority-scheduling)
+* [Round Robin](#round-robin)
+* [Multilevel Queue](#multilevel-queue)
+	* [Feedback Queue](#feedback-queue)
 
 <!-- vim-markdown-toc -->
 
 ## Basic Concepts
 
-- Max cpu util done w/ multi-programming
-- CPU I/O burst cycle...
-- ...
+- Max CPU utililization done with multi-programming
+- **CPU-I/O burst cycle**
+	- Process execution consists of a cycle of CPU execution and I/O wait
+- CPU burst followed by I/O burst
 - I/O-bount has many short CPU bursts
 - CPU-bound has few long bursts
 - Distribution b/w the two is important
--
 
 ## CPU Scheduler
 
 - Scheduler selects from processes in ready queue, allocates cpu to one of them
 - Scheduling decisions happen when process:
-	1. Switches ... (nonpreemptive)
-		- Non-preemptive scheduling: process removed from cpu by ...
-	1. ...
+	1. Switches from running to waiting state (nonpreemptive)
+	1. Switches from running to ready state
+	1. Switches from waiting to ready
+	1. Terminates
+- **Non-preemptive scheduling**
+	- Process removed from cpu by itself (syscall) or interrupt
+		- After interrupt done, CPU can be assigned to any process that's waiting
+- **Preemptive sheduling**:
+	- If interrupt causes removal of process from CPU, after interrupt done, CPU assigned back to that process
 
 ## Dispatcher
 
@@ -48,9 +54,20 @@
 
 ## Scheduling Criteria
 
-- Maximize CPU util
-- Max throughput
-- ...
+- CPU utilization
+	- Want to maximize
+- Throughput
+	- Number of processes that complete their execution per time unit
+	- Want to maximize
+- Turn-around time
+	- Amount of time to execute a process
+	- Want to minimize
+- Waiting time
+	- Amount of time process waits in ready queue
+	- Want to minimize
+- Response time
+	- Time it takes from when request submitted until first response produced (not output)
+	- Want to minimize
 
 ## Scheduling Algos
 
@@ -63,15 +80,21 @@
 ## FCFS
 
 - Non-preemptive
+	- Processes assigned to CPU in same order as ready queue
 - Easy to implement and fair
 - Low overall throughput
+
+![FCFS](https://i.imgur.com/vPjkupn.png)
+
+![FCFS Convoy](https://i.imgur.com/24NqNAK.png)
 
 ## SJF
 
 - Assoc. process with length of its next CPU burst
 	- Prioritize shorter burst times
 - Non-preemptive
-- Gives min. waiting time
+	- Once CPU given to the process it cannot be preempted until completes its CPU burst
+- Gives min. waiting time (optimal)
 - Non-preemptive not good for time-sharing
 - Difficult to know length of next CPU request
 - No discrimination?
@@ -82,19 +105,27 @@
 
 - Uses length of previous burst, using exponential averaging
 1. $t_n$ = actual length of nth cpu burst
-1. $\tau_{n+1} = predicted val for next burst
+1. $\tau_{n+1}$ = predicted val for next burst
 1. $\alpha,-0 \le \alpha \le 1$
 1. Define: $\tau_{n=1} = \alpha t_n + (1-\alpha)\tau_n$
 
-### Priority Scheduling
+## SRTF
+
+- After each interrupt, pick process with shortest next burst time
+- Preemptive
+	- If a new process arrives with CPU burst length less than remaining time of current executing process, preempt
+- Can produce min. avg. wait time
+- Increased overhead
+
+## Priority Scheduling
 
 - Priority number assoc with each process
 - CPU alloc to highest priority number
 - SJF is this where priority is inverse of predicted next burst time
 - Problem with starvation
-- ...
+- Solution is **aging** – as time progresses increase the priority of the process
 
-### Round Robin
+## Round Robin
 
 - Each process gets small unit of cpu time (**time quantum**)
 	- After time elapsed, process is preempted and added to end of ready queue
@@ -108,7 +139,7 @@
 - Worse avg. turnaround time
 - no discrimination
 
-### Multilevel Queue
+## Multilevel Queue
 
 - Ready queue partitioned into queus
 	- Foregoround (interactive)
@@ -117,7 +148,7 @@
 		- ...
 - ...
 
-#### Feedback Queue
+### Feedback Queue
 
 - Proc can move b/w queues, aging can be done this way
 - Defined by:
