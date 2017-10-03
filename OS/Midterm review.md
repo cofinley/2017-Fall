@@ -20,7 +20,7 @@
 	- [Algos](#algos)
 		- [FCFS](#fcfs)
 		- [SJF](#sjf)
-		- [SRTF](#srtf)
+		- [SRTF (Preemptive SJF)](#srtf-preemptive-sjf)
 		- [Priority Scheduling](#priority-scheduling)
 		- [Round Robin](#round-robin)
 - [Scheduling in threading system](#scheduling-in-threading-system)
@@ -186,8 +186,27 @@
 
 ## Processor Synchronization
 
+- Critical section problem
+	- Critical section is section of code that should only be accessed by one process
+		- Variables, data, etc. accessed
+	- Each process has a critical section segment code
+		- Changes and read/writes
+		- If process in critical section, all other processes need to be locked out
+	- Protocol needed to solve this problem of locking out
+		- Each process must ask permission to enter critical section in **entry section**, followed by **exit section**, then **remainder section**
+
+	```c
+	do {
+		// section entry
+			// critical section
+		// section exit
+			// remainder section
+	} while(true);
+	```
+
 - Requirements of solution to critical section
 	1. Mutual exclusion
+		- Only one process accessing particular critical section at a time
 		- If a process is executing its critical section, no other cooperating processes can be executing in their critical sections
 	1. Progress
 		- Make sure some work is getting done
@@ -199,7 +218,7 @@
 
 ### Peterson's solution
 
-- Two-process solution
+- Two-process solution to critical section problem
 - Assume LOAD and STORE instructions are atomic (can't be interrupted)
 - Two variables shared:
 	- `int turn`
@@ -207,6 +226,7 @@
 	- `Boolean flag[2]`
 		- Array used to indicate if process ready to enter critical section
 		- flag[i] = true implies process i is ready
+
 ```c
 do {
 	flag[i] = true;
@@ -226,7 +246,7 @@ do {
 - Sync tool that is more sophisticated than mutex lock
 - *S* variable
 - Only accessed by `wait()` and `signal()`
-	- Both atomic
+	- Both atomic (can't be interrupted)
 	```c
 	wait(S) {
 		while (S <= 0)
@@ -247,6 +267,11 @@ do {
 		// remainder section
 	} while(true);
 	```
+	- Basically says the first process can go through into crit section (since `mutex` is > 0), but blocks subsequent processes from progressing into crit section (since `mutex` now <=0) until the first one finishes by calling `signal()` (when `mutex` is again > 0)
+	- With **counting** semaphores, can have bigger range of cooperating processes
+		- Can adjust max values to allow more processes in crit section at a time
+	- With **binary** semaphores (true/false values), it can only lock and unlock (aka mutex lock) to show that a process is in crit section and others should wait
+		- Can only have one process in crit section at a time
 
 ### Bounded-buffer problem
 
@@ -316,12 +341,15 @@ do {
 	- Prioritize shorter burst times
 - Non-preemptive
 	- Once CPU given to the process it cannot be preempted until completes its CPU burst
+	- The first process will always go first
+		- After it finished, find shortest process that has already arrived to go next
 - Gives min. waiting time (optimal)
+	- Avg. wait time: sum of (start\_time - arrival\_time)_i / number\_of\_processes
 - Non-preemptive not good for time-sharing
 - Difficult to know length of next CPU request
 - No discrimination?
 
-#### SRTF
+#### SRTF (Preemptive SJF)
 
 - After each interrupt, pick process with shortest next burst time
 - Preemptive
@@ -332,6 +360,7 @@ do {
 - Image above says preemptive SJF, but is same thing as SRTF
 	- P1 starts, but as soon as a shorter process comes, P1 is preempted
 - Can produce min. avg. wait time
+	- Avg. wait time: sum of (start_time1 - start_time2? - arrival_time) / number_of_processes
 - Increased overhead
 
 #### Priority Scheduling
