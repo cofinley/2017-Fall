@@ -1,6 +1,18 @@
-# OS - Memory
+# OS - Main Memory
 
 > 2017/10/10
+
+<!-- vim-markdown-toc GFM -->
+* [Background](#background)
+* [Address Binding](#address-binding)
+* [Logical vs. Physical Address Space](#logical-vs-physical-address-space)
+* [Memory Management Unit (MMU)](#memory-management-unit-mmu)
+* [Dynamic Relocation](#dynamic-relocation)
+* [Dynamic Linking](#dynamic-linking)
+* [Swapping](#swapping)
+	* [Context Switch Time with Swapping](#context-switch-time-with-swapping)
+
+<!-- vim-markdown-toc -->
 
 ## Background
 
