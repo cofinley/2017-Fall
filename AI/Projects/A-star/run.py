@@ -1,6 +1,4 @@
-from connections import Connection
-from locations import Location
-from graph import Graph
+from search import search
 
 
 def prompt_choice(s):
@@ -15,48 +13,67 @@ def prompt_choice(s):
 def read_cons():
     c_file = str(input("Input path to connections file: "))
     connections = {}
-    print(c_file)
     with open(c_file, 'r') as f:
         lines = f.readlines()
         for line in lines:
             if "end" not in line.lower():
                 line = line.split(" ")
-                connections[line[0]] = [i.strip() for i in line[2:]]
+                node = line[0]
+                cons = [i.strip() for i in line[2:]]
+                connections[node] = cons
     return connections
 
 
 def read_locs():
     l_file = str(input("Input path to locations file: "))
-    locations = {} 
+    locations = {}
     with open(l_file, 'r') as f:
         lines = f.readlines()
         for line in lines:
             if "end" not in line.lower():
                 line = line.split(" ")
-                locations[line[0]] = tuple((int(line[1]), int(line[2].strip())))
+                node = line[0]
+                pos_x = int(line[1])
+                pos_y = int(line[2])
+                pos = (pos_x, pos_y)
+                locations[node] = pos
     return locations
 
 
-def map_locations(cons, locs):
-    g = Graph()
+def read_city(endpoint, locations):
+    valid = False
+    while not valid:
+        city = input("Enter {} city: ".format(endpoint))
+        if city in locations:
+            valid = True
+        else:
+            print("Not a valid city, try again.")
+        if valid:
+            return city
+
+
+def create_graph(cons, locs):
+    g = {}
     for loc in locs:
-        node = loc
+        name = loc
         pos = locs[loc]
-        connections = [cons[c] for c in cons if c == loc][0]
-        l = Location(node, pos, connections)
-        g.locs.append(l)
+        connections = cons[loc]
+        g[name] = {"name": name, "pos": pos, "cons": connections}
     return g
 
+
+def pprint(path):
+    print(" -> ".join(path))
 
 if __name__ == "__main__":
     cons = read_cons()
     locs = read_locs()
-    graph = map_locations(cons, locs)
-    for loc in graph.locs:
-        print(loc.node, loc.pos, loc.cons)
-    start = input("Enter start city: ")
-    target = input("Enter target city: ")
+    graph = create_graph(cons, locs)
+    start = read_city("start", locs)
+    target = read_city("target", locs)
     excluded = input("Enter excluded cities, separated by comma: ")
-    excluded = [i.strip for i in ex.split(",")]
-    heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
-    readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")
+    excluded = [i.strip() for i in excluded.split(",")]
+    print()
+    path = search(graph, start, target, excluded)
+    # heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
+    # readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")

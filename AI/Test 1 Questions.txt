@@ -1,0 +1,11 @@
+Convert to all disjunctions
+English phrase to statement/implication with quantifiers
+Minimax
+Expert systems, forward/backward chaining
+  Backward
+    to find X, find rule that ends in defining X, not an attribute of X
+      the rule that defines X needs to match conditions, find rules which end in defining those conditions
+        do this until reached base condition/rule
+        iterate with rules that end in defining X if first back chain didn't pan out
+  Forward
+    

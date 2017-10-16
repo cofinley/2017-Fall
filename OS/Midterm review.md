@@ -253,8 +253,7 @@ do {
 	- Both atomic (can't be interrupted)
 	```c
 	wait(S) {
-		while (S <= 0)
-			; // busy wait, no operation
+		while (S <= 0) ; // busy wait until condition false, no operation
 		S--;
 	}
 
@@ -296,9 +295,9 @@ do {
 - Max CPU utililization done with multi-programming
 - **CPU-I/O burst cycle**
 	- Process execution consists of a cycle of CPU execution and I/O wait
-- CPU burst followed by I/O burst
-- I/O-bount has many short CPU bursts
-- CPU-bound has few long bursts
+		- CPU burst followed by I/O burst
+	- I/O-bount has many short CPU bursts
+	- CPU-bound has few long bursts
 - Distribution b/w the two is important
 - **Non-preemptive scheduling**
 	- Process removed from cpu by itself (syscall) or interrupt
@@ -330,8 +329,10 @@ do {
 
 - Non-preemptive
 	- Processes assigned to CPU in same order as ready queue
+	- OS doesn't interrupt a process in favor of another
 - Easy to implement and fair
 - Low overall throughput
+- No discrimination
 
 ![FCFS](https://i.imgur.com/vPjkupn.png)
 
@@ -346,12 +347,11 @@ do {
 - Non-preemptive
 	- Once CPU given to the process it cannot be preempted until completes its CPU burst
 	- The first process will always go first
-		- After it finished, find shortest process that has already arrived to go next
+		- After it finishes, find shortest process that has already arrived to go next
 - Gives min. waiting time (optimal)
 	- Avg. wait time: sum of (start\_time - arrival\_time)_i / number\_of\_processes
 - Non-preemptive not good for time-sharing
 - Difficult to know length of next CPU request
-- No discrimination?
 
 #### SRTF (Preemptive SJF)
 
@@ -373,7 +373,7 @@ do {
 - CPU alloc to highest priority number
 - SJF is this where priority is inverse of predicted next burst time
 - Problem with starvation
-- Solution is **aging** – as time progresses increase the priority of the process
+	- Solution is **aging** – as time progresses increase the priority of the process
 
 #### Round Robin
 
@@ -381,12 +381,15 @@ do {
 	- After time elapsed, process is preempted and added to end of ready queue
 - Timer interrupts every quantum to schedule next process
 - Performance
-	- q large => FIFO
+	- q large => FIFO (context switch rarely happens)
 	- q small => q must be large wrt context switch, else overhead is too high
+		- Can't have it switch too much
 - Easy to implement for time-sharing and fair
 - Better response time
+	- Everyone gets a chance at a guranteed time
 - Worse avg. turnaround time
-- no discrimination
+	- Lots of switching and waiting for processes with short burst times
+- No discrimination
 
 ## Scheduling in threading system
 
