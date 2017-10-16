@@ -73,7 +73,8 @@ if __name__ == "__main__":
     target = read_city("target", locs)
     excluded = input("Enter excluded cities, separated by comma: ")
     excluded = [i.strip() for i in excluded.split(",")]
+    readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")
+    verbose = readout == "b"
     print()
-    path = search(graph, start, target, excluded)
+    path = search(graph, start, target, excluded, verbose)
     # heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
-    # readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")

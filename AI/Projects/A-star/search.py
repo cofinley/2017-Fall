@@ -1,7 +1,7 @@
 from math import sqrt
 
 
-def search(graph, start, target, excluded):
+def search(graph, start, target, excluded, verbose):
     print("Heuristic: Straigh line distance:")
     print("Starting city:", start)
     print("Target city:", target)
@@ -24,9 +24,10 @@ def search(graph, start, target, excluded):
 
         # Add current to path
         path.append(current["name"])
-        print("Current optimal path: ")
-        pprint(path)
-        print("Distance traveled: {0:.2f}".format(total_distance))
+        if verbose:
+            print("Current optimal path: ")
+            pprint(path)
+            print("Distance traveled: {0:.2f}".format(total_distance))
 
         # Get neighbors of current node, add to open list
         neighbors = current["cons"]
@@ -67,11 +68,17 @@ def search(graph, start, target, excluded):
 
         # Pick choice with lowest f value
         current = picked_node
+        if verbose:
+            print("Best move is to:", current["name"])
 
         # Find distance traveled from last node
         last_node_name = path[-1]
         last_node = graph[last_node_name]
         total_distance += calc_distance(last_node["pos"], current["pos"])
+
+    if not verbose:
+        print("Optimal path:")
+        pprint(path)
 
     return path
 
