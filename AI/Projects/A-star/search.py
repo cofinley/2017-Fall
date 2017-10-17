@@ -1,86 +1,91 @@
 from math import sqrt
 
 
-def search(graph, start, target, excluded, verbose):
-    print("Heuristic: Straigh line distance:")
+def search(graph, start, target, excluded, verbose, heuristic):
+    if heuristic == "a":
+        print("Heuristic: Straight line distance:")
+    else:
+        print("Heuristic: Fewest Links:")
     print("Starting city:", start)
     print("Target city:", target)
     # Init visited list
     closed = excluded
     # Init final path
     path = []
-    total_distance = 0
-    found = False
+
+    # Create open set mapped to f values
+    open = {start: 0}
 
     # Graph lookup for input strings
     start = graph[start]
     target = graph[target]
 
     current = start
-    open = []
 
-    while not open or not found:
-        # open.append(current["name"])
+    while open:
+
+        # Pick move which minimizes f value
+        current = min(open, key=open.get)
+        current = graph[current]
 
         # Add current to path
         path.append(current["name"])
+
+        if current == target:
+            print("Final path:")
+            pprint(path)
+            if verbose:
+                total_distance = measure_total_distance(graph, path)
+                print("Distance traveled: {0:.2f}".format(total_distance))
+            return path
+
         if verbose:
             print("Current optimal path: ")
             pprint(path)
+            total_distance = measure_total_distance(graph, path)
             print("Distance traveled: {0:.2f}".format(total_distance))
 
-        # Get neighbors of current node, add to open list
-        neighbors = current["cons"]
-        open += neighbors
-
         # Remove current from possible moves
+        open.pop(current["name"])
         closed.append(current["name"])
 
-        # If target in closed list, means path has been found
-        if target["name"] in closed:
-            found = True
-            break
-
-        # Remove current from open list
-        open = [i for i in open if i != current["name"]]
-
-        # Get ready to pick a neighbor
-        picked_node = None
-        picked_f = 10000
-        for choice in open:
+        # Get neighbors of current node
+        neighbors = current["cons"]
+        for choice in neighbors:
             if choice not in closed:
+                open[choice] = 0
                 # Graph lookup for choice
                 choice = graph[choice]
 
-                # Calculate distances from start and finish to choice
-                g = calc_distance(start["pos"], choice["pos"])
-                h = calc_distance(choice["pos"], target["pos"])
-                f = g + h
-
-                # Find choice with lowest f value
-                if picked_node:
-                    if f < picked_f:
-                        picked_node = choice
-                        picked_f = f
+                if heuristic == "a":
+                    # Straight-line distance heuristic
+                    # Calculate distances from start and finish to choice
+                    g = calc_distance(start["pos"], choice["pos"])
+                    h = calc_distance(choice["pos"], target["pos"])
                 else:
-                    picked_node = choice
-                    picked_f = f
+                    # Fewest moves heuristic
+                    g = len(path)
+                    h = 0
+                f = g + h
+                open[choice["name"]] = f
 
-        # Pick choice with lowest f value
-        current = picked_node
-        if verbose:
-            print("Best move is to:", current["name"])
+    return None
 
-        # Find distance traveled from last node
-        last_node_name = path[-1]
-        last_node = graph[last_node_name]
-        total_distance += calc_distance(last_node["pos"], current["pos"])
 
-    if not verbose:
-        print("Optimal path:")
-        pprint(path)
-
-    return path
+def search_shortest(graph, start, target, excluded, verbose, path=[]):
+    path = path + [start]
+    if start == target:
+        return path
+    if start not in graph:
+        return None
+    shortest_path = None
+    for connection in graph[start]["cons"]:
+        if connection not in path:
+            new_path = search_shortest(graph, connection, target, excluded, verbose, path)
+            if new_path:
+                if not shortest_path or len(new_path) < len(shortest_path):
+                    shortest_path = new_path
+    return shortest_path
 
 
 def calc_distance(p1, p2):
@@ -93,3 +98,15 @@ def calc_distance(p1, p2):
 
 def pprint(path):
     print(" -> ".join(path))
+
+
+def measure_total_distance(graph, path):
+    total_distance = 0
+    for i, step in enumerate(path):
+        node = graph[step]
+        if i != 0:
+            prev = path[i-1]
+            prev_node = graph[prev]
+            total_distance += calc_distance(prev_node["pos"], node["pos"])
+
+    return total_distance

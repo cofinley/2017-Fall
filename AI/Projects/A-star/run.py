@@ -10,10 +10,9 @@ def prompt_choice(s):
     return choice
 
 
-def read_cons():
-    c_file = str(input("Input path to connections file: "))
+def read_cons(filename):
     connections = {}
-    with open(c_file, 'r') as f:
+    with open(filename, 'r') as f:
         lines = f.readlines()
         for line in lines:
             if "end" not in line.lower():
@@ -24,10 +23,9 @@ def read_cons():
     return connections
 
 
-def read_locs():
-    l_file = str(input("Input path to locations file: "))
+def read_locs(filename):
     locations = {}
-    with open(l_file, 'r') as f:
+    with open(filename, 'r') as f:
         lines = f.readlines()
         for line in lines:
             if "end" not in line.lower():
@@ -66,15 +64,20 @@ def pprint(path):
     print(" -> ".join(path))
 
 if __name__ == "__main__":
-    cons = read_cons()
-    locs = read_locs()
+    c_file = str(input("Input path to connections file: "))
+    l_file = str(input("Input path to locations file: "))
+    cons = read_cons(c_file)
+    locs = read_locs(l_file)
     graph = create_graph(cons, locs)
     start = read_city("start", locs)
     target = read_city("target", locs)
     excluded = input("Enter excluded cities, separated by comma: ")
-    excluded = [i.strip() for i in excluded.split(",")]
+    if excluded == "":
+        excluded = []
+    else:
+        excluded = [i.strip() for i in excluded.split(",")]
     readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")
     verbose = readout == "b"
+    heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
     print()
-    path = search(graph, start, target, excluded, verbose)
-    # heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
+    search(graph, start, target, excluded, verbose, heuristic)
