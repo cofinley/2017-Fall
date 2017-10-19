@@ -1,3 +1,11 @@
+"""
+    Connor Finley, Joseph Farmer (Group 5)
+    Introduction to A.I.
+    Project 1
+    A* Search Algorithm
+    2017/10/19
+"""
+
 from math import sqrt
 
 
