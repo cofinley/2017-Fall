@@ -1,4 +1,5 @@
 from math import sqrt
+from random import randint
 
 
 def search(graph, start, target, excluded, verbose, heuristic):
@@ -35,14 +36,20 @@ def search(graph, start, target, excluded, verbose, heuristic):
             print("Final path:")
             pprint(path)
             if verbose:
-                total_distance = measure_total_distance(graph, path)
+                if heuristic == "a":
+                    total_distance = measure_total_distance(graph, path)
+                else:
+                    total_distance = len(path) - 1
                 print("Distance traveled: {0:.2f}".format(total_distance))
             return path
 
         if verbose:
             print("Current optimal path: ")
             pprint(path)
-            total_distance = measure_total_distance(graph, path)
+            if heuristic == "a":
+                total_distance = measure_total_distance(graph, path)
+            else:
+                total_distance = len(path) - 1
             print("Distance traveled: {0:.2f}".format(total_distance))
 
         # Remove current from possible moves
@@ -60,19 +67,19 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 if heuristic == "a":
                     # Straight-line distance heuristic
                     # Calculate distances from start and finish to choice
-                    g = calc_distance(start["pos"], choice["pos"])
-                    h = calc_distance(choice["pos"], target["pos"])
+                    g = find_target_straight_line_distance(start["pos"], choice["pos"])
+                    h = find_target_straight_line_distance(choice["pos"], target["pos"])
                 else:
                     # Fewest moves heuristic
                     g = len(path)
-                    h = 0
+                    h = len(find_target_edge_distance(graph, choice["name"], target["name"], excluded))
                 f = g + h
                 open[choice["name"]] = f
 
     return None
 
 
-def search_shortest(graph, start, target, excluded, verbose, path=[]):
+def find_target_edge_distance(graph, start, target, excluded, path=[]):
     path = path + [start]
     if start == target:
         return path
@@ -81,14 +88,14 @@ def search_shortest(graph, start, target, excluded, verbose, path=[]):
     shortest_path = None
     for connection in graph[start]["cons"]:
         if connection not in path:
-            new_path = search_shortest(graph, connection, target, excluded, verbose, path)
+            new_path = find_target_edge_distance(graph, connection, target, excluded, path)
             if new_path:
                 if not shortest_path or len(new_path) < len(shortest_path):
                     shortest_path = new_path
     return shortest_path
 
 
-def calc_distance(p1, p2):
+def find_target_straight_line_distance(p1, p2):
     x2 = p2[0]
     x1 = p1[0]
     y2 = p2[1]
@@ -107,6 +114,6 @@ def measure_total_distance(graph, path):
         if i != 0:
             prev = path[i-1]
             prev_node = graph[prev]
-            total_distance += calc_distance(prev_node["pos"], node["pos"])
+            total_distance += find_target_straight_line_distance(prev_node["pos"], node["pos"])
 
     return total_distance

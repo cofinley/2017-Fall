@@ -8,7 +8,6 @@ if __name__ == "__main__":
     start = "D4"
     target = "G5"
     excluded = []
-    verbose = False
+    verbose = True
     heuristic = "b"
-    print()
     search.search(graph, start, target, excluded, verbose, heuristic)
