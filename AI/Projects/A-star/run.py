@@ -4,17 +4,16 @@ import search
 def prompt_choice(s):
     """
     Prompt user for binary choice
+
     Args:
         s (str): prompt string
 
     Returns:
         string of choice ('a' or 'b')
     """
-    choice = None
-    while choice != "a" or choice != "b":
-        choice = input(s)
-        if choice == "a" or choice == "b":
-            break
+    choice = input(s).lower()
+    while choice != "a" and choice != "b":
+        choice = input(s).lower()
     return choice
 
 
@@ -34,9 +33,9 @@ def read_cons(filename):
         for line in lines:
             if "end" not in line.lower():
                 line = line.split(" ")
-                node = line[0]
-                cons = [i.strip() for i in line[2:]]
-                connections[node] = cons
+                node_name = line[0].upper()
+                cons = [i.strip().upper() for i in line[2:]]
+                connections[node_name] = cons
     return connections
 
 
@@ -56,11 +55,11 @@ def read_locs(filename):
         for line in lines:
             if "end" not in line.lower():
                 line = line.split(" ")
-                node = line[0]
+                node_name = line[0].upper()
                 pos_x = int(line[1])
                 pos_y = int(line[2])
                 pos = (pos_x, pos_y)
-                locations[node] = pos
+                locations[node_name] = pos
     return locations
 
 
@@ -77,7 +76,7 @@ def read_city(endpoint, locations):
     """
     valid = False
     while not valid:
-        city = input("Enter {} city: ".format(endpoint))
+        city = input("Enter {} city: ".format(endpoint)).upper()
         if city in locations:
             valid = True
         else:
@@ -107,6 +106,7 @@ def create_graph(cons, locs):
 
 
 if __name__ == "__main__":
+
     # Get and parse connections and locations file
     c_file = str(input("Input path to connections file: "))
     l_file = str(input("Input path to locations file: "))
@@ -131,5 +131,7 @@ if __name__ == "__main__":
     readout = prompt_choice("Just show end result (a) or go step-by-step (b)? ")
     verbose = readout == "b"
     heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
+
     print()
     search.search(graph, start, target, excluded, verbose, heuristic)
+    input("\nPress ENTER to exit")

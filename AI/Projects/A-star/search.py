@@ -23,7 +23,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
     else:
         print("Heuristic: Fewest Links:")
     print("Starting city:", start)
-    print("Target city:", target)
+    print("Target city:", target, "\n")
 
     # Init visited list, include excluded
     closed = [] + excluded
@@ -44,6 +44,13 @@ def search(graph, start, target, excluded, verbose, heuristic):
         lowest_f = min(open, key=open.get)
         current_node = graph[lowest_f]
 
+        # Print out best next move from previous state
+        if len(path) >= 1:
+            if verbose:
+                print("Best move is to", current_node["name"], "\n")
+                input("Press ENTER for next step")
+                print()
+
         # Add current_node to path
         path.append(current_node["name"])
 
@@ -55,7 +62,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
             if is_end:
                 print("Final path:")
             else:
-                print("Current optimal path:")
+                print("Current path: ", end="")
             pprint(path)
             if heuristic == "a":
                 # If straight line distance, use euclidean distance
