@@ -45,7 +45,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
         current_node = graph[lowest_f]
 
         # Print out best next move from previous state
-        if len(path) >= 1:
+        if len(path) > 0:
             if verbose:
                 print("Best move is to", current_node["name"], "\n")
                 input("Press ENTER for next step")
