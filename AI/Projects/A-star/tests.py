@@ -8,7 +8,7 @@ if __name__ == "__main__":
     start = "A1"
     target = "C3"
     excluded = []
-    verbose = False
+    verbose = True
     # Straight-line = a, fewest links = b
     heuristic = "b"
     search.search(graph, start, target, excluded, verbose, heuristic)

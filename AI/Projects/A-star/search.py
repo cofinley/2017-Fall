@@ -60,7 +60,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
         # If reached end or verbose flag, print out path and total distance so far
         if verbose or is_end:
             if is_end:
-                print("Final path:")
+                print("Final path: ", end="")
             else:
                 print("Current path: ", end="")
             pprint(path)
