@@ -9,6 +9,7 @@ if __name__ == "__main__":
     target = "G5"
     excluded = []
     verbose = True
-	# Straight-line = a, fewest links = b
+
+    # Straight-line = a, fewest links = b
     heuristic = "b"
     search.search(graph, start, target, excluded, verbose, heuristic)

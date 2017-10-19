@@ -1,8 +1,23 @@
 from math import sqrt
-from random import randint
 
 
 def search(graph, start, target, excluded, verbose, heuristic):
+    """
+    Find path through graph from start to target, avoiding nodes in excluded.
+    Pick best path based on given heuristic.
+
+    Args:
+        graph (dict): {node_name: "name": node_name, "cons": cons, "pos": pos}
+        start (str): start node name
+        target (str): target node name
+        excluded (list): names of nodes to avoid
+        verbose (bool): whether to print out steps or not
+        heuristic (str): Straight-line distance = a, fewest links = b
+
+    Returns:
+        final path (as list of node names) if one found, else None
+    """
+
     if heuristic == "a":
         print("Heuristic: Straight line distance:")
     else:
@@ -10,8 +25,8 @@ def search(graph, start, target, excluded, verbose, heuristic):
     print("Starting city:", start)
     print("Target city:", target)
 
-    # Init visited list
-    closed = excluded
+    # Init visited list, include excluded
+    closed = [] + excluded
 
     # Init final path
     path = []
@@ -20,73 +35,86 @@ def search(graph, start, target, excluded, verbose, heuristic):
     open = {start: 0}
 
     # Graph lookup for input strings
-    start = graph[start]
-    target = graph[target]
-
-    current = start
+    start_node = graph[start]
+    target_node = graph[target]
 
     while open:
 
-        # Pick move which minimizes f value
-        current = min(open, key=open.get)
-        current = graph[current]
+        # Pick choice in open list which minimizes f value
+        lowest_f = min(open, key=open.get)
+        current_node = graph[lowest_f]
 
-        # Add current to path
-        path.append(current["name"])
+        # Add current_node to path
+        path.append(current_node["name"])
 
         # Check if end
-        if current == target:
-            print("Final path:")
-            pprint(path)
-            if verbose:
-                if heuristic == "a":
-                    total_distance = measure_total_distance(graph, path)
-                else:
-                    total_distance = len(path) - 1
-                print("Distance traveled: {0:.2f}".format(total_distance))
-            return path
+        is_end = current_node["name"] == target_node["name"]
 
-        # Print path and current distance
-        if verbose:
-            print("Current optimal path: ")
+        # If reached end or verbose flag, print out path and total distance so far
+        if verbose or is_end:
+            if is_end:
+                print("Final path:")
+            else:
+                print("Current optimal path:")
             pprint(path)
             if heuristic == "a":
-                total_distance = measure_total_distance(graph, path)
+                # If straight line distance, use euclidean distance
+                total_distance = measure_total_straight_line_distance(graph, path)
             else:
                 # If fewest links heuristic, use edge count for distance
                 total_distance = len(path) - 1
             print("Distance traveled: {0:.2f}".format(total_distance))
+            if is_end:
+                return path
 
-        # Remove current from possible moves
-        open.pop(current["name"])
-        closed.append(current["name"])
+        # Remove current_node from possible moves
+        open.pop(current_node["name"])
+        closed.append(current_node["name"])
 
-        # Get neighbors of current node
-        neighbors = current["cons"]
+        # Loop through the neighbors of the current node
+        neighbors = current_node["cons"]
         for choice in neighbors:
             if choice not in closed:
+
+                # Init choice's f value
                 open[choice] = 0
+
                 # Graph lookup for choice
-                choice = graph[choice]
+                choice_node = graph[choice]
 
                 if heuristic == "a":
                     # Straight-line distance heuristic
                     # Calculate distances from start and finish to choice
-                    g = find_target_straight_line_distance(start["pos"], choice["pos"])
-                    h = find_target_straight_line_distance(choice["pos"], target["pos"])
+                    g = find_target_straight_line_distance(start_node["pos"], choice_node["pos"])
+                    h = find_target_straight_line_distance(choice_node["pos"], target_node["pos"])
                 else:
-                    # Fewest moves heuristic
+                    # Fewest links heuristic
                     g = len(path)
-                    # Use bfs for h value
-                    h = len(find_target_edge_distance(graph, choice["name"], target["name"], excluded))
+                    # Use BFS for h value
+                    h = len(find_target_edge_distance(graph, choice_node["name"], target_node["name"], excluded))
                 f = g + h
-                open[choice["name"]] = f
+
+                # Replace choice's initial f value with real f value
+                open[choice] = f
 
     return None
 
 
 def find_target_edge_distance(graph, start, target, excluded, path=[]):
-    # Distance to target using BFS
+    """
+    Distance to target using BFS
+
+    Args:
+        graph (dict): {node_name: "name": node_name, "cons": cons, "pos": pos}
+        start (str): start node name
+        target (str): target node name
+        excluded (list): names of nodes to avoid
+        path (list): node names visited
+
+    Returns:
+        the shortest possible amount of edges (links) from the starting node to the target node, avoiding those excluded
+
+    """
     path = path + [start]
     if start == target:
         return path
@@ -103,7 +131,16 @@ def find_target_edge_distance(graph, start, target, excluded, path=[]):
 
 
 def find_target_straight_line_distance(p1, p2):
-    # Distance to target using euclidian distance
+    """
+    Distance to target using euclidean distance
+
+    Args:
+        p1 (tuple): point 1
+        p2 (tuple): point 2
+
+    Returns:
+        the euclidean distance between both points
+    """
     x2 = p2[0]
     x1 = p1[0]
     y2 = p2[1]
@@ -112,11 +149,27 @@ def find_target_straight_line_distance(p1, p2):
 
 
 def pprint(path):
+    """
+    Pretty print path (a -> b -> c -> etc.)
+
+    Args:
+        path (list): node names visited
+    """
     print(" -> ".join(path))
 
 
-def measure_total_distance(graph, path):
-    # Reconstruct path and find total distance
+def measure_total_straight_line_distance(graph, path):
+    """
+    Reconstruct path and find total distance
+
+    Args:
+        graph (dict): {node_name: "name": node_name, "cons": cons, "pos": pos}
+        path (list): node names visited
+
+    Returns:
+        the euclidean distance from start to end of path
+    """
+
     total_distance = 0
     for i, step in enumerate(path):
         node = graph[step]
