@@ -9,8 +9,10 @@ def search(graph, start, target, excluded, verbose, heuristic):
         print("Heuristic: Fewest Links:")
     print("Starting city:", start)
     print("Target city:", target)
+
     # Init visited list
     closed = excluded
+
     # Init final path
     path = []
 
@@ -32,6 +34,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
         # Add current to path
         path.append(current["name"])
 
+        # Check if end
         if current == target:
             print("Final path:")
             pprint(path)
@@ -43,12 +46,14 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 print("Distance traveled: {0:.2f}".format(total_distance))
             return path
 
+        # Print path and current distance
         if verbose:
             print("Current optimal path: ")
             pprint(path)
             if heuristic == "a":
                 total_distance = measure_total_distance(graph, path)
             else:
+                # If fewest links heuristic, use edge count for distance
                 total_distance = len(path) - 1
             print("Distance traveled: {0:.2f}".format(total_distance))
 
@@ -72,6 +77,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 else:
                     # Fewest moves heuristic
                     g = len(path)
+                    # Use bfs for h value
                     h = len(find_target_edge_distance(graph, choice["name"], target["name"], excluded))
                 f = g + h
                 open[choice["name"]] = f
@@ -80,6 +86,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
 
 
 def find_target_edge_distance(graph, start, target, excluded, path=[]):
+    # Distance to target using BFS
     path = path + [start]
     if start == target:
         return path
@@ -96,6 +103,7 @@ def find_target_edge_distance(graph, start, target, excluded, path=[]):
 
 
 def find_target_straight_line_distance(p1, p2):
+    # Distance to target using euclidian distance
     x2 = p2[0]
     x1 = p1[0]
     y2 = p2[1]
@@ -108,6 +116,7 @@ def pprint(path):
 
 
 def measure_total_distance(graph, path):
+    # Reconstruct path and find total distance
     total_distance = 0
     for i, step in enumerate(path):
         node = graph[step]
