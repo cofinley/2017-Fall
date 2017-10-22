@@ -1,0 +1,4 @@
+cameFrom is needed rather than path
+	keeps most efficient path from target in mind
+	path just builds off the wrong information
+		heuristics/cost build off path as well
