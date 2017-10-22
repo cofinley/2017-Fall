@@ -1,4 +1,10 @@
-cameFrom is needed rather than path
+Had to redo a few things after finding the problem with fewest links.
+
+path_links (linked list) is needed rather than path (list)
 	keeps most efficient path from target in mind
 	path just builds off the wrong information
-		heuristics/cost build off path as well
+		heuristics/cost were building off path as well
+
+I think read_city is still needed for input validation.
+
+I like the idea of excluding cities from the beginning, however the code changes were a little verbose. Will take a look at later.

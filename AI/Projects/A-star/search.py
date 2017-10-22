@@ -35,6 +35,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
     print("Excluding:", ", ".join(excluded))
     print()
 
+    # Create reversed linked list/map for each graph edge chosen
     path_links = {start: None}
 
     # Create open set mapped to f values
