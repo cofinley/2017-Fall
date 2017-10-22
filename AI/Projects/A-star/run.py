@@ -142,5 +142,4 @@ if __name__ == "__main__":
 
     print()
     path = search.search(graph, start, target, excluded, verbose, heuristic)
-    print(" -> ".join(path))
     input("\nPress ENTER to exit")

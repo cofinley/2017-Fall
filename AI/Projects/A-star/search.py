@@ -35,41 +35,45 @@ def search(graph, start, target, excluded, verbose, heuristic):
     print("Excluding:", ", ".join(excluded))
     print()
 
-    came_from = {start: None}
+    path_links = {start: None}
 
     # Create open set mapped to f values
     open = {start: 0}
 
-    g_scores = {start: 0}
+    # Create closed set in form of g_scores, add excluded
+    g_scores = {i: 0 for i in excluded}
+    g_scores[start] = 0
 
-    # Graph lookup for input strings
     start_node = graph[start]
     target_node = graph[target]
 
     while open:
 
+        # Select node with lowest f value as current
         current = min(open, key=open.get)
         current_node = graph[current]
 
         open.pop(current)
 
         # Print out best next move from previous state
-        if len(construct_path(came_from, current)) > 0:
-            if verbose:
-                print("Best move is to", current_node["name"], "\n")
-                input("Press ENTER for next step")
-                print()
+        if verbose and len(construct_path(path_links, current)) > 0:
+            previous = path_links[current_node["name"]]
+            print("Best move is from {} to {}".format(previous, current))
+            input("Press ENTER for next step")
+            print()
 
-        # Check if end
         is_end = current_node["name"] == target_node["name"]
 
         # If reached end or verbose flag, print out path and total distance so far
         if verbose or is_end:
+
             if is_end:
                 print("Final path: ", end="")
             else:
                 print("Current path: ", end="")
-            path = construct_path(came_from, current)
+            path = construct_path(path_links, current)
+            print(" -> ".join(path))
+
             if heuristic == "a":
                 # If straight line distance, use euclidean distance
                 total_distance = measure_total_straight_line_distance(graph, path)
@@ -77,34 +81,38 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 # If fewest links heuristic, use edge count for distance
                 total_distance = len(path) - 1
             print("Distance traveled: {0:.2f}".format(total_distance))
+
             if is_end:
                 return path
 
-        # Loop through the neighbors of the current node
         for choice in current_node["cons"]:
-            # Graph lookup for choice
+
             choice_node = graph[choice]
 
-            if heuristic == "b":
-                # Cost is number of moves up to this point plus the next one
-                g = g_scores[current] + 1
-            else:
+            if heuristic == "a":
+                # G cost is straight-line distance from start to choice
                 g = find_target_straight_line_distance(start_node["pos"], choice_node["pos"])
+            else:
+                # G cost is number of moves up to this point plus the next one
+                g = g_scores[current] + 1
 
             if choice not in g_scores or g < g_scores[choice]:
+
+                # Only consider choices not visited before or with better costs than before
 
                 g_scores[choice] = g
 
                 if heuristic == "a":
                     h = find_target_straight_line_distance(choice_node["pos"], target_node["pos"])
                 else:
+                    # For fewest links, only consider g cost
                     h = 0
 
                 f = g + h
 
-                # Replace choice's initial f value with real f value
+                # Update f values and path links for choices
                 open[choice] = f
-                came_from[choice] = current
+                path_links[choice] = current
 
     return None
 
@@ -127,19 +135,19 @@ def find_target_straight_line_distance(p1, p2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
-def construct_path(came_from, target):
+def construct_path(path_links, target):
     """
     Construct path from start to target
 
     Args:
-        came_from (dict): linked list of explored connections
+        path_links (dict): linked list of explored connections
         target (str): target node name
     """
     path = [target]
-    previous = came_from[target]
+    previous = path_links[target]
     while previous is not None:
         path.append(previous)
-        previous = came_from[previous]
+        previous = path_links[previous]
     path.reverse()
     return path
 

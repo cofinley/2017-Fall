@@ -16,9 +16,8 @@ if __name__ == "__main__":
     graph = run.create_graph(cons, locs)
     start = "D4"
     target = "G5"
-    excluded = []
+    excluded = ["D5"]
     verbose = False
     # Straight-line = a, fewest links = b
     heuristic = "b"
     path = search.search(graph, start, target, excluded, verbose, heuristic)
-    print(" -> ".join(path))
