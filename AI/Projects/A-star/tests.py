@@ -9,6 +9,7 @@
 import run
 import search
 
+
 if __name__ == "__main__":
     cons = run.read_cons("c.txt")
     locs = run.read_locs("l.txt")
@@ -18,5 +19,6 @@ if __name__ == "__main__":
     excluded = []
     verbose = False
     # Straight-line = a, fewest links = b
-    heuristic = "a"
-    search.search(graph, start, target, excluded, verbose, heuristic)
+    heuristic = "b"
+    path = search.search(graph, start, target, excluded, verbose, heuristic)
+    print(" -> ".join(path))

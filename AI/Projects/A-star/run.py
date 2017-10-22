@@ -141,5 +141,6 @@ if __name__ == "__main__":
     heuristic = prompt_choice("Heuristic: straight line distance(a) or fewest links(b): ")
 
     print()
-    search.search(graph, start, target, excluded, verbose, heuristic)
+    path = search.search(graph, start, target, excluded, verbose, heuristic)
+    print(" -> ".join(path))
     input("\nPress ENTER to exit")

@@ -8,8 +8,6 @@
 
 from math import sqrt
 
-import heapq
-
 
 def search(graph, start, target, excluded, verbose, heuristic):
     """
@@ -40,8 +38,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
     came_from = {start: None}
 
     # Create open set mapped to f values
-    open = PriorityQueue()
-    open.put(start, 0)
+    open = {start: 0}
 
     g_scores = {start: 0}
 
@@ -49,13 +46,15 @@ def search(graph, start, target, excluded, verbose, heuristic):
     start_node = graph[start]
     target_node = graph[target]
 
-    while not open.empty():
+    while open:
 
-        current = open.get()
+        current = min(open, key=open.get)
         current_node = graph[current]
 
+        open.pop(current)
+
         # Print out best next move from previous state
-        if len(pprint(came_from, current)) > 0:
+        if len(construct_path(came_from, current)) > 0:
             if verbose:
                 print("Best move is to", current_node["name"], "\n")
                 input("Press ENTER for next step")
@@ -70,7 +69,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 print("Final path: ", end="")
             else:
                 print("Current path: ", end="")
-            path = pprint(came_from, current)
+            path = construct_path(came_from, current)
             if heuristic == "a":
                 # If straight line distance, use euclidean distance
                 total_distance = measure_total_straight_line_distance(graph, path)
@@ -79,7 +78,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 total_distance = len(path) - 1
             print("Distance traveled: {0:.2f}".format(total_distance))
             if is_end:
-                return pprint(came_from, target)
+                return path
 
         # Loop through the neighbors of the current node
         for choice in current_node["cons"]:
@@ -87,6 +86,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
             choice_node = graph[choice]
 
             if heuristic == "b":
+                # Cost is number of moves up to this point plus the next one
                 g = g_scores[current] + 1
             else:
                 g = find_target_straight_line_distance(start_node["pos"], choice_node["pos"])
@@ -103,7 +103,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
                 f = g + h
 
                 # Replace choice's initial f value with real f value
-                open.put(choice, f)
+                open[choice] = f
                 came_from[choice] = current
 
     return None
@@ -127,12 +127,13 @@ def find_target_straight_line_distance(p1, p2):
     return sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
-def pprint(came_from, target):
+def construct_path(came_from, target):
     """
-    Pretty print path (a -> b -> c -> etc.)
+    Construct path from start to target
 
     Args:
-        path (list): node names visited
+        came_from (dict): linked list of explored connections
+        target (str): target node name
     """
     path = [target]
     previous = came_from[target]
@@ -140,7 +141,6 @@ def pprint(came_from, target):
         path.append(previous)
         previous = came_from[previous]
     path.reverse()
-    print(" -> ".join(path))
     return path
 
 
@@ -165,17 +165,3 @@ def measure_total_straight_line_distance(graph, path):
             total_distance += find_target_straight_line_distance(prev_node["pos"], node["pos"])
 
     return total_distance
-
-
-class PriorityQueue:
-    def __init__(self):
-        self.elements = []
-
-    def empty(self):
-        return len(self.elements) == 0
-
-    def put(self, item, priority):
-        heapq.heappush(self.elements, (priority, item))
-
-    def get(self):
-        return heapq.heappop(self.elements)[1]
