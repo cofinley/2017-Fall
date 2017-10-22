@@ -23,7 +23,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
         heuristic (str): Straight-line distance = a, fewest links = b
 
     Returns:
-        final path (as list of node names) if one found, else None
+        final path (a linked list of node names) if one found, else None
     """
 
     if heuristic == "a":
