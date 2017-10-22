@@ -3,7 +3,20 @@ Had to redo a few things after finding the problem with fewest links.
 path_links (linked list) is needed rather than path (list)
 	keeps most efficient path from target in mind
 	path just builds off the wrong information
+		Problem was that node neighboring the start with f value of 1 would be picked
+			Its neighbors would be explored
+				Then the next lowest f value node neighboring the start would be picked (also node with 1)
+					This would create an impossible path since you've essentially jumped over the starting node
 		heuristics/cost were building off path as well
+
+with path_links, it's better because it works backwards rather than forwards, unlike the path list
+	It will still picks whatever node has the lowest f value, but instead adding it to the path, it branches the path
+		And if that branch reaches the end, it only follows the branch back to the root/start
+			No other branches are considered
+
+With just path, it's as if you're trying to explore equally valid paths by adding to a list
+	It should really be represented by a better data structure: one that branches when the logic branches
+		This helps break ties for equal f values
 
 I think read_city is still needed for input validation.
 
