@@ -23,3 +23,4 @@ To quickly test:
 Usage details:
 
 	- Connection and location text file paths can have spaces in them since Python casts the input to a string. No escaping or quotes needed.
+	- `verbose` variable is the bool that dictates step-by-step or just final result for True and False, respectively

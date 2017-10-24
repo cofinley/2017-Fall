@@ -8,3 +8,4 @@ dist/
 *.zip
 *.exe
 .cache/
+*.tmp
