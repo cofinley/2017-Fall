@@ -45,7 +45,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
     g_scores = {i: 0 for i in excluded}
     g_scores[start] = 0
 
-    start_node = graph[start]
+    # Graph lookup
     target_node = graph[target]
 
     while open:
@@ -57,9 +57,9 @@ def search(graph, start, target, excluded, verbose, heuristic):
         open.pop(current)
 
         # Print out best next move from previous state
-        if verbose and len(construct_path(path_links, current)) > 0:
+        if verbose and len(construct_path(path_links, current)) > 1:
             previous = path_links[current_node["name"]]
-            print("Best move is from {} to {}".format(previous, current))
+            print("Best next move is from {} to {}".format(previous, current))
             input("Press ENTER for next step")
             print()
 
@@ -77,7 +77,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
 
             if heuristic == "a":
                 # If straight line distance, use euclidean distance
-                total_distance = measure_total_straight_line_distance(graph, path)
+                total_distance = g_scores[path[-1]]
             else:
                 # If fewest links heuristic, use edge count for distance
                 total_distance = len(path) - 1
@@ -92,7 +92,7 @@ def search(graph, start, target, excluded, verbose, heuristic):
 
             if heuristic == "a":
                 # G cost is straight-line distance from start to choice
-                g = find_target_straight_line_distance(start_node["pos"], choice_node["pos"])
+                g = g_scores[current] + find_target_straight_line_distance(current_node["pos"], choice_node["pos"])
             else:
                 # G cost is number of moves up to this point plus the next one
                 g = g_scores[current] + 1
@@ -110,6 +110,10 @@ def search(graph, start, target, excluded, verbose, heuristic):
                     h = 0
 
                 f = g + h
+
+                # Look-ahead helper (not included by default)
+                # if choice == target:
+                #     f = -1
 
                 # Update f values and path links for choices
                 open[choice] = f
@@ -151,26 +155,3 @@ def construct_path(path_links, target):
         previous = path_links[previous]
     path.reverse()
     return path
-
-
-def measure_total_straight_line_distance(graph, path):
-    """
-    Reconstruct path and find total distance
-
-    Args:
-        graph (dict): {node_name: "name": node_name, "cons": cons, "pos": pos}
-        path (list): node names visited
-
-    Returns:
-        the euclidean distance from start to end of path
-    """
-
-    total_distance = 0
-    for i, step in enumerate(path):
-        node = graph[step]
-        if i != 0:
-            prev = path[i-1]
-            prev_node = graph[prev]
-            total_distance += find_target_straight_line_distance(prev_node["pos"], node["pos"])
-
-    return total_distance

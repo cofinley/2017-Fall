@@ -1,6 +1,5 @@
-calculator
 effective access time
-save sequence to find bankers algo
+	need calculator
 deadlock
 main mem ch 7
 virtual memory not included 10/19 lecture
@@ -8,3 +7,8 @@ page fault
   steps to
   if tlb, how will access time be changed?
 look at hw
+
+
+
+
+save sequence to find bankers algo

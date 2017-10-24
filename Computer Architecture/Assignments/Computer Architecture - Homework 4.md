@@ -276,3 +276,37 @@ $(1.F)_2 \times 2^{E-32767}$
 >
 > Eight iterations are required. Show your steps.
 
+![Scan](HW4_scan.png)
+
+Remainder: `0`
+
+Quotient: `1010 1110`
+
+## 7
+
+> Using the refined signed multiplication algorithm, show the multiplication of:
+>
+> Multiplicand = 00101101 by Multiplier = 11010110 (signed)
+>
+> The result of the multiplication should be a 16 bit signed number in HI and LO registers. Eight iterations are required because there are 8 bits in the multiplier. Show the steps.
+
+| Iteration | Step                              | Multiplicand | Sign | Product = HI, LO  |
+| --------- | --------------------------------- | ------------ | ---- | ----------------- |
+| 0         | Init (HI=0, LO=multiplier)        | 00101101     |      | 00000000 11010110 |
+| 1         | LO[0] = 0 => Do nothing           | 00101101     |      |                   |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 00000000 01101011 |
+| 2         | LO[0] = 1 => ADD                  | 00101101     | 0    | 00101101 01101011 |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 00010110 10110101 |
+| 3         | LO[0] = 1 => ADD                  | 00101101     | 0    | 10000011 10110101 |
+|           | Shift(Sign, HI, LO) right 1 bit   | 00101101     |      | 01000011 11011010 |
+| 4         | LO[0] = 0 => Do nothing           |              |      |                   |
+|           | Shift(Sign, HI, LO) right 1 bit   | 00101101     |      | 00100001 11101101 |
+| 5         | Lo[1] = 1 => ADD                  | 00101101     | 0    | 01001110 11101101 |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 00100111 01110110 |
+| 6         | LO[0] = 0 => Do nothing           |              |      |                   |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 00010011 10111011 |
+| 7         | LO[0] = 1 => ADD                  | 00101101     |      | 01000000 10111011 |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 00100000 01011101 |
+| 8         | LO[0] = 1 => SUB (ADD 2's compl.) | 11010011     |      | 11110010 01011101 |
+|           | Shift(Sign, HI, LO) right 1 bit   |              |      | 01111001 00101110 |
+
