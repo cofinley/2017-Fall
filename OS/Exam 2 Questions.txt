@@ -1,0 +1,56 @@
+OS Exam 2 Questions
+
+- Deadlocks
+  - Necessary conditions
+    - Cycle present and only one instance of resource type
+  - Resource-Allocation Graph
+  - Avoidance
+  - Prevention
+  - Banker's
+  - Detection
+  - Wait-for graph
+  - Recovery
+    - Choose one victim, suspend its resources, check again for deadlock
+      - If deadlock still, choose second victim
+    - Disadvantage: starvation of processes
+
+- Main memory
+  - Address binding
+  - Logical/physical space
+  - Allocation
+    - Dynamic storage alloc
+    - Strategies of selecting free space
+  - Paging system
+    - MEthod of implementation
+    - EAT
+      - If miss: two mem access + access time to TLB
+    - Memory protection in paging system
+    - Diff. strucutres of page table
+      - Hierachical (multilevel)
+      - Inverted
+      - Disadvantages
+    - Segmentation
+      - Protection
+    - Fragmentation
+    - Advantages of paging and segmentation
+      - Sharing/protection easier in segmentation system
+
+- Virtual Memory
+  - Benefits
+  - Demand paging
+  - Steps to handle page fault
+  - EAT
+  - Copy-on-write
+    - Child process involved
+  - Page replacement methods
+  - Second change algo
+  - Allocations of frames
+  - Alloc algos
+  - Global vs. local replacement
+    - Global: choose victim from any process
+    - Local: choose victim that's making new reference in a specific process (helps with thrashing)
+  - Thrashing
+  - Working set model
+  - Prepaging
+  - Page size implications (on fragmentation, page table size, etc.)
+  - Program structure
