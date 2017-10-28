@@ -73,6 +73,5 @@ int shmctl(int shmid, int cmd, struct shmid_ds *buf);
 - These code samples were taken from the Linux man pages, not POSIX
 - Use `ipcs -m` to view existing shared memory segments
 - Use `ipcrm -M shm_key` or `ipcrm -m shm-id` to remove segments
-	- Require super user
 - Great resource [here](http://www.csl.mtu.edu/cs3331.ck/common/03-Process.pdf)
 	- Go towards bottom to see shared memory section
