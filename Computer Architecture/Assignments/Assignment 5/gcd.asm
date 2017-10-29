@@ -11,66 +11,80 @@ response: .space 20
 
 input_loop:
 
-	### User Input ###
+    # User Input
 
-	la $a0, str1           # load str1 address into $a0
-	li $v0, 4              # load I/O code for string output
-	syscall                # output str1
+    la $a0, str1            # load str1 address
+    li $v0, 4               # Use sysycallcode for string output
+    syscall                 # output string
 
-	li $v0, 5              # load I/O code for integer input
-	syscall                # input integer n1 into $v0
-	add $a1, $v0, $zero    # store n1 in $a1
+    li $v0, 5               # Input first integer into $t0
+    syscall
+    move $t0, $v0
 
-	la $a0, str2           # load str2 address into $a0
-	li $v0, 4              # load I/O code for string output
-	syscall                # output str2
+    la $a0, str2            # Load second prompt same way as first
+    li $v0, 4
+    syscall
 
-	li $v0, 5              # load I/O code for integer input
-	syscall                # input integer n2 into $v0
-	add $a2, $v0, $zero    # store n2 in $a2
+    li $v0, 5               # Input second integer into $t1
+    syscall
+    move $t1, $v0
 
-	### GCD ###
-	
-	jal gcd
-	move $s0, $v0
+    #***************************************************************************************************
 
-	la $a0, str3           # load str3 address into $a0
-	li $v0, 4              # load I/O code for string output
-	syscall                # output str3
-	li $v0, 1              # load I/O code for integer output
-	add $a0, $s0, $zero    # $a0 = $s0; put gcd result in $a0 for output
-	syscall                # output result from gcd
-	
-	### Go again ###
-	
-	la $a0, str4           # load str1 address into $a0
-	li $v0, 4              # load I/O code for string output
-	syscall                # output str1
-	
-	la $a0, response
-	li $a1, 3
-	li $v0, 8              # load I/O code for integer input
-	syscall                # input go again decision into $v0
-	
-	lb  $t7, 0($a0)
-	
-	beq $t7, 'y', input_loop
-	beq $t7, 'Y', input_loop
-	j exit
+    # Get GCD, print result
+    
+    jal gcd                 # Call GCD function and print result
+
+    la $a0, str3            # Output result string
+    li $v0, 4
+    syscall
+
+    li $v0, 1               # Output result integer (gcd)
+    move $a0, $s0           # Load result for syscall
+    syscall
+
+    #***************************************************************************************************
+
+    # Repeat prompt
+
+    la $a0, str4            # Prompt user to go again
+    li $v0, 4
+    syscall
+    
+    la $a0, response        # Capture y/n response
+    li $a1, 3
+    li $v0, 8
+    syscall
+    
+    lb  $t7, 0($a0)         # Determine result and repeat if necessary, else exit
+    
+    beq $t7, 'y', input_loop    # Check for case-insensitive 'y' answer
+    beq $t7, 'Y', input_loop
+    j exit
+
+#***************************************************************************************************
+
+# Calculate GCD
 
 gcd:
-	# a1, a2 are the two ints
-	# gcd returned in v0
-	abs $t0, $a1
-	abs $t1, $a2
+
+    abs $t0, $t0            # Normalize a and b inputs with absolute value
+    abs $t1, $t1
+
 loop:
-	beq $t1, $0, done
-	divu $t0, $t1
-	move $t0, $t1
-	mfhi $t1
-	j loop
+
+    beq $t1, $0, done       # Until b is 0, divide a by b
+    divu $t0, $t1
+    move $t0, $t1           # a <- b
+    mfhi $t1                # b <- remainder
+    j loop
+
 done:
-	move $v0, $t0
-	jr $ra
+
+    move $s0, $t0           # Store result
+    jr $ra                  # Go back to caller line
 
 exit:
+
+    li $v0, 10              # Exit program
+    syscall
