@@ -1,4 +1,48 @@
-# OS Exam 2 Questions
+# OS Exam 2 Review
+
+<!-- TOC -->
+
+- [Deadlocks (Chapter 7)](#deadlocks-chapter-7)
+	- [Necessary conditions](#necessary-conditions)
+	- [Resource-Allocation Graph](#resource-allocation-graph)
+	- [Prevention](#prevention)
+	- [Avoidance](#avoidance)
+		- [Banker's](#bankers)
+	- [Detection](#detection)
+	- [Wait-for graph](#wait-for-graph)
+	- [Recovery](#recovery)
+- [Main memory (Chapter 8)](#main-memory-chapter-8)
+	- [Address binding](#address-binding)
+	- [Logical/physical space](#logicalphysical-space)
+	- [Allocation](#allocation)
+		- [Fragmentation](#fragmentation)
+	- [Segmentation](#segmentation)
+	- [Paging](#paging)
+		- [Method of Implementation](#method-of-implementation)
+		- [EAT](#eat)
+		- [Memory protection in paging system](#memory-protection-in-paging-system)
+		- [Page Table Structure](#page-table-structure)
+		- [Segmentation](#segmentation-1)
+		- [Fragmentation](#fragmentation-1)
+		- [Advantages of paging and segmentation](#advantages-of-paging-and-segmentation)
+- [Virtual Memory (Chapter 9)](#virtual-memory-chapter-9)
+	- [Benefits](#benefits)
+	- [Demand paging](#demand-paging)
+	- [Steps to handle page fault](#steps-to-handle-page-fault)
+	- [EAT](#eat-1)
+	- [Copy-on-write](#copy-on-write)
+	- [Page replacement methods](#page-replacement-methods)
+	- [Second change algo](#second-change-algo)
+	- [Allocations of frames](#allocations-of-frames)
+	- [Alloc algos](#alloc-algos)
+	- [Global vs. local replacement](#global-vs-local-replacement)
+	- [Thrashing](#thrashing)
+	- [Working set model](#working-set-model)
+	- [Prepaging](#prepaging)
+	- [Page size implications (on fragmentation, page table size, etc.)](#page-size-implications-on-fragmentation-page-table-size-etc)
+	- [Program structure](#program-structure)
+
+<!-- /TOC -->
 
 ## Deadlocks (Chapter 7)
 
@@ -164,9 +208,7 @@
   - Unlike segmentatin, paging avoids external fragmentation and need for compaction
     - Also solves problem of fitting various-sized memory chunks in backing store during swapping
       - Backing store has fragmentation problems and access is slow so compaction is impossible
-
-#### Method of implementation
-
+    - Can have internal fragmentation
 - Split physical memory into fixed-sized blocks called **frames**
 - Split logical memory into same-sized blocks called __pages__
 - Load process' pages into any available frames when ready to execute
@@ -176,19 +218,88 @@
   - Page number used as index in __page table__
     - Page table contains base address of each page in physical memory
       - Combine with offset to define real address
-- ![Page table](https://i.imgur.com/6yuid2f.png)
+
+![Page table](https://i.imgur.com/6yuid2f.png)
+
+- __Frame table__ keeps track of all frames in memory
+  - One entry for each physical page frame
+
+#### Method of Implementation
+
+- Registers
+  - Good if page table small (~256 entries)
+- Memory
+  - Pointed to by __page-table base register (PTBR)__
+    - Good if switching between multiple tables
+    - Disadvantage is memory access time
+      - Have to access memory twice:
+        1. Need to first index the table (provides frame number)
+        1. Then need to find byte (uses page offset, provides actual byte)
+      - Solve with hardware cache: __translation look-aside buffer (TLB)__
+        - Instant lookup
+        - Needs to be kept small, thou
+
+---
+
+- TLB
+  - Entry format: key/tag, value
+  - Contains page-table entries
+  - Logical address' page number presented to TLB
+    - If found (_hit_), return frame number
+    - If not found (_miss_), need to make memory reference to actual page table
+
+![TLB](https://i.imgur.com/SKxPjwV.png)
 
 #### EAT
 
-- If miss: two mem access + access time to TLB
+- __Hit ratio__: % of times a given page number found in TLB
+- __Effective memory-access time__: probablistic time to get page table lookup
+  - (hit ratio %) * TLB access time + (1 - hit ratio %) * (TLB access time + Memory access time)
+  - Example:
+    - TLB hits 80% of the time
+    - 100 ns time to access memory
+    - 100 ns time for memory-mapped access in TLB lookup
+    - If TLB miss, that means we've done a TLB lookup already (100 ns), but now need to also access the memory (page table, another 100 ns), totalling a 200 ns lookup
+    - EAT = 0.8 * 100 ns + 0.2 * 200 ns = 120 ns
 
 #### Memory protection in paging system
 
-#### Diff. strucutres of page table
+- Done via protection bits associated with each frame kept in page table
+  - Bit can mean page is read-write or read-only
+  - Checked as physical address is computed
+  - Illegal op => hardware trap
+- Valid-invalid bit
+  - Attached to each page table entry
+  - _Valid_: page is in process's logical address space and is therefore a legal page
+  - _Invalid_: page not in logical space, illegal addresses trapped
+  - Can result in internal fragmentation
+    - If page extends half into valid space and half into invalid space, the invalid half of the page can't be used, but is still allocated
+- Rarely is the address range fully used in a process
+  - Use __page-table length register (PTLR)__ to indicate size of page table
+    - Check every logical address to make sure addres is in valid range for process
+
+#### Page Table Structure
 
 - Hierachical (multilevel)
+  - Large address space => big page table for each process
+  - Split up page table twice (outer and inner)
+    - Use two page numbers and an offset for the logical address
+    ![Hierarchical Page Table](https://i.imgur.com/zbANrAW.png)
+    ![Two-part address](https://i.imgur.com/riWxN2e.png)
 - Inverted
+  - Solves problem of huge page table and smaller physical memory
+  - Page table has only one page for each frame
+    - Entry contains virtual address of page stored in real memory location __and__ process information (i.e. pid)
+    ![Inverted page table](https://i.imgur.com/cgyrDSd.png)
+  - Only one page table in the system
 - Disadvantages
+  - Inverted
+    - Increase search time of page table
+      - Lookup on virtual address but sorted by physical address  
+      - Use hash table to help
+    - Harder to implement shared memory
+      - Shared memory has multiple virtual addresses (one for each process) pointing to same physical address
+        - Can't do when one-to-one mapping in inverted scheme
 
 #### Segmentation
 
@@ -200,13 +311,43 @@
 
 - Sharing/protection easier in segmentation system
 
-## Virtual Memory
+## Virtual Memory (Chapter 9)
+
+- Memory management topics in chapter 8 usually required the entire process to be in memory before execution
+  - Limits size of program to size of physical memory
+  - Often, entire program not needed in memory
+- Virtual memory is a technique that allows execution of process not completely in memory
+  - Separation of logical memory from physical memory
+    - Allows for very large virtual memory
+- Not easy to implement
 
 ### Benefits
 
+- Allows programs to be larger than physical memory, easy sharing/shared memory, efficient process creation
+- Program not constrained by limit of physical memory
+- Less physical memory being used means more simultaneous programs in memory
+- Less I/O needed to swap => faster programs
 
 ### Demand paging
 
+- AKA lazy swapping
+- Load pages only as needed during program execution
+  - Fast timing
+- Program on disk swapped into memory with __pager__
+  - Only swaps in what's needed page-by-page
+- Need valid-invalid bit to tell between pages in memory vs. disk
+  - Valid: page valid and in memory
+  - Invalid: page either not valid or valid but on disk
+    - Access attempt -> page fault
+
+![Demand Paging](https://i.imgur.com/VMbcIFy.png)
+
+- In picture above, the cylinder is the disk
+  - Pages A-H are on the disk, but only those that are needed (A,C,F) are loaded into the page table and marked with the valid bit
+
+---
+
+> __Note:__ pages are said to be on 'disk', but this is technically 'secondary memory'. This is usually a section of a (high-speed) disk known as the __swap space__. This happens when setting up linux and a swap partition is made.
 
 ### Steps to handle page fault
 
