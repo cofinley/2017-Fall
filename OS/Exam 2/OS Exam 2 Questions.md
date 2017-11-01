@@ -32,7 +32,7 @@
 	- [EAT](#eat-1)
 	- [Copy-on-write](#copy-on-write)
 	- [Page replacement methods](#page-replacement-methods)
-	- [Second change algo](#second-change-algo)
+	- [Second chance algo](#second-chance-algo)
 	- [Allocations of frames](#allocations-of-frames)
 	- [Alloc algos](#alloc-algos)
 	- [Global vs. local replacement](#global-vs-local-replacement)
@@ -347,13 +347,25 @@
 
 ---
 
-> __Note:__ pages are said to be on 'disk', but this is technically 'secondary memory'. This is usually a section of a (high-speed) disk known as the __swap space__. This happens when setting up linux and a swap partition is made.
+> __Note:__ pages are said to be on 'disk', but this is technically 'secondary memory'. This is usually a section of a disk known as the __swap space__. This happens when setting up linux and a swap partition is made. On windows, the page file is located on the disk with a `.swp` extension which also holds pages of RAM.
 
 ### Steps to handle page fault
 
+- Page faults happen when trying to access page with invalid bit
+
+![Steps](https://i.imgur.com/9ji1AOv.png)
+![Steps verbose](https://i.imgur.com/OgHEYjN.png)
 
 ### EAT
 
+- If no page faults, EAT = memory access time
+- If page fault, read page from disk and access desired word
+- EAT = (1-p) * memory access time + p * page fault time
+- Need to know time needed to service fault
+  - Procedures involved include:
+    - Service page-fault interrupt
+    - Read in page
+    - Restart process
 
 ### Copy-on-write
 
@@ -361,8 +373,30 @@
 
 ### Page replacement methods
 
+- Problem: multiprogramming runs multiple processes and each process allocates N pages, but may only use N/2 of them
+  - __Over-allocation__
+  - If page fault, then get page from disk. But if not enough memory to place page, then we need to swap/replaces pages in memory to make room.
+- If no frame free, find one that's not currently being used and free it
+  - Free a __victim__ frame by writing contents to swap space and remove from page/frame tables
+  - Read in desired page into newly freed frame, update page/frame tables
+  - Continue from where fault occured
+  - Doubles page fault service time (swap out _and_ in)
+    - Reduce overhead with __modify bit__ in page/frame table entry
 
-### Second change algo
+---
+
+- FIFO Page Replacement
+  - When page fault, replace page which is oldest in page frame
+  ![FIFO](https://i.imgur.com/0fhpBch.png)
+- Optimal
+  - Replace page which won't be used for the longest period of time
+  - Guarantees lowest possible page fault rate for fixed number of frames
+  ![Optimal](https://i.imgur.com/8e8Br87.png)
+- Least Recently Used (LRU)
+  - Replace page that has not been used for longest period of time
+  ![LRU](https://i.imgur.com/tCHAm7R.png)
+
+### Second chance algo
 
 
 ### Allocations of frames
