@@ -7,7 +7,7 @@
 	- [Resource-Allocation Graph](#resource-allocation-graph)
 	- [Prevention](#prevention)
 	- [Avoidance](#avoidance)
-		- [Banker's](#bankers)
+		- [Banker's Algorithm](#bankers-algorithm)
 	- [Detection](#detection)
 	- [Wait-for graph](#wait-for-graph)
 	- [Recovery](#recovery)
@@ -84,9 +84,9 @@
 - Disadvantages of preventative methods include low device utilization and system throughput
 - Use information ahead of time to determine if proc should wait to avoid deadlock
   - Information: max number of each resource type needed
-    - Leads into banker's algorithm
+    - Leads into safe states and banker's algorithm
 
-#### Banker's
+#### Banker's Algorithm
 
 - Known:
   - Available resources (vector of length _m_)
@@ -95,11 +95,17 @@
 - Unknown:
   - Need: _n_ x _m_ matrix, (Max - allocation)
 
+![Bankers](https://i.imgur.com/y67YeFa.png)
+
 ### Detection
 
 ![Detection algorithm](https://i.imgur.com/y4AkURY.png)
 
 ### Wait-for graph
+
+- Like resource-allocation graph, but just shows which processes depend on which
+
+![Wait-for](https://i.imgur.com/E6qOodH.png)
 
 ### Recovery
 
@@ -201,6 +207,9 @@
 - Map 2D logical address to 1D physical address using __segment table__
   - Table is array of base-limit register pairs
   - Offset must not go beyond segment's limit
+- Better than paging for sharing since segment expands to hold entire procedures rather than being split over multiple pages
+- Easier for protection because all segment entries are same type
+  - Mutable and unmutable data/instructions
 
 ### Paging
 
@@ -404,6 +413,8 @@
 
 ### Alloc algos
 
+- Equal: split available frames equally among total # of processes
+- Proportional: Add total number of pages between proceses (S), for each process, it's share is its (page count / S), then multiplied by the available frames
 
 ### Global vs. local replacement
 
@@ -412,14 +423,72 @@
 
 ### Thrashing
 
+1. CPU utilization low
+1. OS increases multiprogramming, brings in new process
+1. Process needs pages, replaces pages being used by other processes
+1. During process execution, it needs more frames
+1. Process faults and then steals more frames from other processes
+1. Those other processes now fault and replace pages from more processes
+1. Domino effect, queue of pages to be replaced builds up, I/O util. increases, CPU util. decreases
+1. CPU util. down => increase multiprogramming and bring in more processes
+1. Cycle starts, this time with even more page faults since more dominos added
+
+- End result: low CPU util and overall throughput; system too busy swapping pages in and out
+- Help with local replacement algo which prevents thrashing process from stealing frames from another
+- Prevent by providing process with guestimating the # of frames it will need
+  - Use __locality model__
+    - Looks at pages being used by program as it jumps from locality to locality (set of pages used together)
+      - Can glean locality info by program's structure and data structures
+    - Principle applied in caching as well
 
 ### Working set model
 
+- Based on locality
+- Define a __window__ or threshold (delta)
+  - Examine most recent <delta> page references
+    - If page in active use, add to working set
+    - If page not in use anymore, drop it from working set after <delta> time units have passed sinces its last reference
+    - This is the working set, an approximation of locality
+- Size of working set: $WSS_i$
+  - $i$ is a process and the process needs $WSS_i$ frames
+  - For each process total demand, $D = \sum{ESS_i}$
+    - If D > available frames, thrashing occurs
+      - B/c some processes won't have enough => domino effect
+
+![Working set](https://i.imgur.com/0LDtuQr.png)
+
+- In the picture above, delta = 10
+  - After 10 units, the working set is the unique page references in that window
 
 ### Prepaging
 
+- Pure demand paging (demand paging from 0 pages currently loaded) will have a large number of page faults at process start
+  - Also problem when process coming into page table entirely from disk
+- Use prepaging to prevent high intial level of paging
+- Can implement by remembering working sets
+- Only worth it if less expensive than large initial paging stage
+  - If only few pages used then definitely not worth it
+- Pages prepaged: $s$
+- Fraction of pages actually needed: $a$
+- Cost of saved page faults: $s \times a$
+- Cost of prepaging unnecessary pages: $s \times (1-a)$
+- If $a$ close to 0, not worth it
 
 ### Page size implications (on fragmentation, page table size, etc.)
 
+- Page table
+  - Smaller page size
+    - More pages
+    - Bigger page table
+    - Less room for internal fragmentation
+    - More accurate locality
+    - Resolution (can isolate more precisely the needed memory)
+  - Larger page size
+    - Faster I/O (?)
+    - Less page faults
+
 ### Program structure
 
+- i * j matrix
+- Row major: i page faults
+- Column major: i * j page faults
